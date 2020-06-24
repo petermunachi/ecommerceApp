@@ -1,10 +1,8 @@
-import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import Input from '../Input';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
 
-
-function Header(props) {
+function Header() {
 
 
   return (

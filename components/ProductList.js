@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import {
   Text,
   View,
@@ -18,6 +20,7 @@ function ProductList(props) {
 
       <ImageDisplay
         style={styles.tinyLogo}
+        // eslint-disable-next-line no-undef
         source={require('../assets/splash.png')}
       />
 
@@ -34,5 +37,13 @@ const styles = StyleSheet.create({
   }
 
 });
+
+ProductList.propTypes = {
+  name: PropTypes.string,
+  price: PropTypes.number,
+  location: PropTypes.string,
+  phoneNumber: PropTypes.string,
+  photo: PropTypes.string,
+};
 
 export default ProductList;

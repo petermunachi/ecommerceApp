@@ -5,10 +5,11 @@ import {
 } from 'react-native';
 
 
-function ImageDisplay(props) {
+function ImageDisplay() {
   return (
     <Image
       style={styles.tinyLogo}
+      // eslint-disable-next-line no-undef
       source={require('../assets/icon.png')}
     />
   )

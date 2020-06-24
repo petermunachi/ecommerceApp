@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import {
   TextInput,
   StyleSheet
@@ -20,5 +22,9 @@ const styles = StyleSheet.create({
   }
 
 });
+
+Input.propTypes = {
+  input: PropTypes.object,
+};
 
 export default Input;

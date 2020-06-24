@@ -1,9 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Text,
-  View,
-  TouchableWithoutFeedback,
-  StyleSheet
 } from 'react-native';
 
 function CategoryList(props) {
@@ -13,12 +11,8 @@ function CategoryList(props) {
   )
 }
 
-const styles = StyleSheet.create({
-
-  categoryContainer: {
-    margin: 10,
-  }
-
-});
+CategoryList.propTypes = {
+  name: PropTypes.string
+};
 
 export default CategoryList;

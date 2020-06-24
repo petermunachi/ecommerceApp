@@ -1,11 +1,11 @@
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
 // In App.js in a new project
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { NavigationContainer, DefaultTheme  } from '@react-navigation/native';
+import { NavigationContainer  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Entypo } from '@expo/vector-icons';
-import HomeScreen from './screens/HomeScreen';
 import Home from './routes/Home';
 
 
@@ -65,7 +65,7 @@ export default function App() {
               }
 
               // You can return any component that you like here!
-              return <Ionicons name={iconName} size={30} color={color} />;
+              return <Ionicons name={iconName} size={size} color={color} />;
             },
           })}
           tabBarOptions={{
