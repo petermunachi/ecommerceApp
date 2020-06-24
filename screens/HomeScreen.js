@@ -6,9 +6,12 @@ import {
   ScrollView,
   Image,
   TouchableWithoutFeedback,
+  ActivityIndicator,
   StyleSheet
 } from 'react-native';
 
+import AnimatedLoader from "react-native-animated-loader";
+import * as Network from 'expo-network';
 import { productMainCategories, products } from '../testData';
 
 import CategoryList from '../components/CategoryList';
@@ -23,40 +26,56 @@ class HomeScreen extends Component {
     this.state = {
         mainCategories: [],
         trendingProducts: [],
+        isLoading: false,
     };
   }
   componentDidMount() {
+    this.setState({isLoading: true})
+
     fetch('/api/productCategories')
-      .then((resp) => resp.json())
+      .then((resp) =>(resp) => {
+          resp.json()
+        }
+      )
       .then(function(data) {
         AsyncStorage.setItem('PRODUCTMAINCATEGORIES', JSON.stringify(productMainCategories));
+        this.setState({isLoading: false})
 
       })
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem('PRODUCTMAINCATEGORIES', JSON.stringify(productMainCategories));
+        this.setState({isLoading: false})
+
 
       });
 
     fetch('/api/trendingProducts')
-      .then((resp) => resp.json())
+      .then((resp) =>(resp) => {
+          resp.json()
+        }
+      )
       .then(function(data) {
         AsyncStorage.setItem('TRENDINGPRODUCTS', JSON.stringify(products));
+        this.setState({isLoading: false})
 
       })
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem('TRENDINGPRODUCTS', JSON.stringify(products));
+        this.setState({isLoading: false})
 
       });
 
     AsyncStorage.getItem('TRENDINGPRODUCTS').then((value)=> this.setState({trendingProducts: JSON.parse(value)}))
     AsyncStorage.getItem('PRODUCTMAINCATEGORIES').then((value)=> this.setState({mainCategories: JSON.parse(value)}))
+    Network.getNetworkStateAsync().then((value)=>{console.log(value) })
   }
 
   render () {
+    const { isLoading, trendingProducts, mainCategories } = this.state;
 
-    const list = this.state.trendingProducts.map((data, index) =>(
+    const list = trendingProducts.map((data, index) =>(
       <TouchableWithoutFeedback
         key={data.id}
         onPress={() => {
@@ -82,11 +101,19 @@ class HomeScreen extends Component {
     return (
       <View style={styles.screen}>
 
+        <AnimatedLoader
+          visible={isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          animationStyle={styles.lottie}
+          speed={1}
+        />
+
         <Text style={styles.headerPrimary}>HOME SCREEN </Text>
         <ScrollView style={styles.scrollView}>
           <Text style={styles.headerPrimary}>Main Categories </Text>
+
           <View style={styles.mainCategoryContainer}>
-            {this.state.mainCategories.map((data, index) =>(
+            {mainCategories.map((data, index) =>(
               <TouchableWithoutFeedback
                 key={data.id}
                 onPress={() => {
@@ -134,7 +161,12 @@ const styles = StyleSheet.create({
   headerPrimary: {
     textAlign: 'center',
     fontSize: 20
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   }
 
 });
+
 export default HomeScreen;

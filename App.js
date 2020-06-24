@@ -1,7 +1,7 @@
 // In App.js in a new project
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Entypo } from '@expo/vector-icons';
@@ -61,16 +61,17 @@ export default function App() {
               } else if (route.name === 'WishList') {
                   iconName = focused ? 'ios-star' : 'ios-star-outline';
               } else if (route.name === 'Profile') {
-                iconName = focused ? 'ios-person' : 'md-person';
+                iconName = focused ? 'md-person' : 'md-person';
               }
 
               // You can return any component that you like here!
-              return <Ionicons name={iconName} size={size} color={color} />;
+              return <Ionicons name={iconName} size={30} color={color} />;
             },
           })}
           tabBarOptions={{
             activeTintColor: 'tomato',
             inactiveTintColor: 'gray',
+            keyboardHidesTabBar: true
           }}
         >
 

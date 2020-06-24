@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet
 } from 'react-native';
+import AnimatedLoader from "react-native-animated-loader";
 
 import { productSubCategories } from '../testData';
 
@@ -19,23 +20,30 @@ import ProductList from '../components/ProductList';
 class SubCategoryScreen extends Component {
 
   state = {
-    subCategories: []
+    subCategories: [],
+    isLoading: false,
   };
 
 
   componentDidMount() {
-    const { categoryId } = this.props.route.params;
-    const { categoryName } = this.props.route.params;
+    const { categoryId, categoryName } = this.props.route.params;
+
+    this.setState({isLoading: true});
 
     fetch(`/api/subCategories/:${categoryId}`)
-      .then((resp) => resp.json())
+      .then((resp) => {
+          return resp.json()
+        }
+      )
       .then(function(data) {
         AsyncStorage.setItem(`${categoryName.toUpperCase()}SUBCATEGORIES`, JSON.stringify(productSubCategories));
+        this.setState({isLoading: false})
 
       })
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem(`${categoryName.toUpperCase()}SUBCATEGORIES`, JSON.stringify(productSubCategories));
+        this.setState({isLoading: false})
 
       });
 
@@ -43,17 +51,25 @@ class SubCategoryScreen extends Component {
   }
 
   render () {
+    const { isLoading, subCategories } = this.state;
+    const { categoryName} = this.props.route.params;
 
     return (
       <View style={styles.screen}>
+        <AnimatedLoader
+          visible={isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          animationStyle={styles.lottie}
+          speed={1}
+        />
 
         <Text style={styles.headerPrimary}>SUB CATEGORIES SCREEN </Text>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.headerPrimary}> {this.props.route.params.categoryName} categories </Text>
+          <Text style={styles.headerPrimary}> {categoryName} categories </Text>
 
           <View style={styles.categoryListContainer}>
             {
-              this.state.subCategories.map((data, index) =>(
+              subCategories.map((data, index) =>(
                 <TouchableWithoutFeedback
                   key={data.id}
                   onPress={() => {
@@ -103,6 +119,10 @@ const styles = StyleSheet.create({
   headerPrimary: {
     textAlign: 'center',
     fontSize: 20
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   }
 
 });

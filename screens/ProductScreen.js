@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   StyleSheet
 } from 'react-native';
+import AnimatedLoader from "react-native-animated-loader";
+
 
 import { product } from '../testData';
 
@@ -18,23 +20,26 @@ import ProductList from '../components/ProductList';
 class ProductScreen extends Component {
 
   state = {
-    productDetails: []
+    productDetails: [],
+    isLoading: false,
   };
 
 
   componentDidMount() {
-    const { productId } = this.props.route.params;
-    const { productName } = this.props.route.params;
+    const { productId, productName } = this.props.route.params;
+    this.setState({isLoading: true});
 
     fetch(`/api/product/:${productId}`)
       .then((resp) => resp.json())
       .then(function(data) {
         AsyncStorage.setItem(`${productName.toUpperCase()}DETAILS`, JSON.stringify(product));
+        this.setState({isLoading: false});
 
       })
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem(`${productName.toUpperCase()}DETAILS`, JSON.stringify(product));
+        this.setState({isLoading: false});
 
       });
 
@@ -42,14 +47,20 @@ class ProductScreen extends Component {
   }
 
   render () {
-    const { productDetails } = this.state;
+    const { productDetails, isLoading } = this.state;
+    const { productName } = this.props.route.params;
 
     return (
       <View style={styles.screen}>
-
+        <AnimatedLoader
+          visible={isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          animationStyle={styles.lottie}
+          speed={1}
+        />
         <Text style={styles.headerPrimary}>PRODUCT SCREEN </Text>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.headerPrimary}> {this.props.route.params.productName} Details </Text>
+          <Text style={styles.headerPrimary}> {productName} Details </Text>
 
           <View style={styles.categoryListContainer}>
           {console.log(Object.keys(productDetails))}

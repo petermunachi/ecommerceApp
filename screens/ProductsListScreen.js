@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet
 } from 'react-native';
+import AnimatedLoader from "react-native-animated-loader";
 
 import { products } from '../testData';
 
@@ -18,23 +19,27 @@ import ProductList from '../components/ProductList';
 class ProductsListScreen extends Component {
 
   state = {
-    products: []
+    products: [],
+    isLoading: false,
   };
 
 
   componentDidMount() {
-    const { subCategoryId } = this.props.route.params;
-    const { subCategoryName } = this.props.route.params;
+    const { subCategoryId,subCategoryName } = this.props.route.params;
+    this.setState({isLoading: true});
 
     fetch(`/api/productsList/:${subCategoryId}`)
       .then((resp) => resp.json())
       .then(function(data) {
         AsyncStorage.setItem(`${subCategoryName.toUpperCase()}PRODUCTS`, JSON.stringify(products));
+        this.setState({isLoading: false});
+
 
       })
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem(`${subCategoryName.toUpperCase()}PRODUCTS`, JSON.stringify(products));
+        this.setState({isLoading: false});
 
       });
 
@@ -42,8 +47,10 @@ class ProductsListScreen extends Component {
   }
 
   render () {
+    const { isLoading, products} = this.state;
+    const { subCategoryName} = this.props.route.params;
 
-    const list = this.state.products.map((data, index) =>(
+    const list = products.map((data, index) =>(
       <TouchableWithoutFeedback
         key={data.id}
         onPress={() => {
@@ -51,7 +58,7 @@ class ProductsListScreen extends Component {
             productId: data.id,
             productName: data.model || data.title,
           });
-        }} 
+        }}
       >
         <View style={styles.categoryContainer}>
           <ProductList
@@ -70,9 +77,16 @@ class ProductsListScreen extends Component {
     return (
       <View style={styles.screen}>
 
+        <AnimatedLoader
+          visible={isLoading}
+          overlayColor="rgba(255,255,255,0.75)"
+          animationStyle={styles.lottie}
+          speed={1}
+        />
+
         <Text style={styles.headerPrimary}>PRODUCTS LISTS SCREEN </Text>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.headerPrimary}> {this.props.route.params.subCategoryName} products </Text>
+          <Text style={styles.headerPrimary}> {subCategoryName} products </Text>
 
           <View style={styles.categoryListContainer}>
             {list}
@@ -104,6 +118,10 @@ const styles = StyleSheet.create({
   headerPrimary: {
     textAlign: 'center',
     fontSize: 20
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   }
 
 });
