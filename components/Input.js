@@ -8,23 +8,24 @@ import {
 
 function Input(props) {
   return (
-    <TextInput {...props} style={{...styles.input, ...props.input}}/>
+    <TextInput {...props} style={{...styles.input, ...props.style}}/>
   )
 }
 
 const styles = StyleSheet.create({
 
   input: {
-    height: 50,
-    borderColor: 'grey',
+    height: 40,
+    width: '100%',
+    borderColor: '#d3d3d3',
     borderWidth: 1,
-    marginVertical: 10
+    marginVertical: 12
   }
 
 });
 
 Input.propTypes = {
-  input: PropTypes.object,
+  style: PropTypes.object,
 };
 
 export default Input;

@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 
 ProductList.propTypes = {
   name: PropTypes.string,
-  price: PropTypes.number,
+  price: PropTypes.string,
   location: PropTypes.string,
   phoneNumber: PropTypes.string,
   photo: PropTypes.string,

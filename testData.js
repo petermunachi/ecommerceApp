@@ -10,27 +10,27 @@ export const userDetail = {
 
 export const productMainCategories = [
   {
-    categoryName:'vehicle',
+    name:'vehicle',
     id: 1
   },
   {
-    categoryName:'property',
+    name:'property',
     id: 2
   },
   {
-    categoryName:'mobile phones & tablets',
+    name:'mobile phones & tablets',
     id: 3
   },
   {
-    categoryName:'electronics',
+    name:'electronics',
     id: 4
   },
   {
-    categoryName:'home & garden',
+    name:'home & garden',
     id: 5
   },
   {
-    categoryName:'fashion',
+    name:'fashion',
     id: 6
   }
 
@@ -39,37 +39,37 @@ export const productMainCategories = [
 export const productSubCategories = [
   {
     categoryName:'vehicle',
-    subCategoryName: 'cars',
+    name: 'cars',
     parentId: 1,
     id: 1
   },
   {
     categoryName:'property',
-    subCategoryName: 'House & Apartment for rent',
+    name: 'House & Apartment for rent',
     parentId: 2,
     id: 2
   },
   {
     categoryName:'mobile phones & tablets',
-    subCategoryName: 'mobile phone',
+    name: 'mobile phone',
     parentId: 3,
     id: 3
   },
   {
     categoryName:'electronics',
-    subCategoryName: 'TV & DVD Equipments',
+    name: 'TV & DVD Equipments',
     parentId: 4,
     id: 4
   },
   {
     categoryName:'home & garden',
-    subCategoryName: 'furniture',
+    name: 'furniture',
     parentId: 5,
     id: 5
   },
   {
     categoryName:'fashion',
-    subCategoryName: 'clothing accessories',
+    name: 'clothing accessories',
     parentId: 6,
     id: 6
   }
