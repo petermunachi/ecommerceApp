@@ -17,8 +17,8 @@ function StateList(props) {
     const {
        list,
        navigation,
-       state,
-       stateName
+       type,
+       location,
     } = props;
 
     return ( 
@@ -28,18 +28,19 @@ function StateList(props) {
                   <TouchableWithoutFeedback
                      key={index}
                      onPress = {() => {
-                        if (state) {
+                        if (type == 'state') {
                            navigation.push('ListScreen', {
-                              status: "state",
-                              stateName: data.name,
+                              type: "lga",
+                              location: data.name,
                            })
-                        }else{
+                        }
+                        if (type == 'lga') {
                            
-                           AsyncStorage.setItem("region", JSON.stringify(data))
-                           AsyncStorage.setItem("stateName", JSON.stringify(stateName))
+                           AsyncStorage.setItem("city", JSON.stringify(data))
+                           AsyncStorage.setItem("stateName", JSON.stringify(location))
                            navigation.navigate('SellScreen', {
-                              stateName: stateName,
-                              lgaName: data,
+                              stateName: location,
+                              city: data,
                            })
 
                         }
@@ -57,6 +58,7 @@ function StateList(props) {
                ))
             }
          </View>
+    
     )
 }
 
@@ -85,7 +87,8 @@ StateList.propTypes = {
    style: PropTypes.object,
    list: PropTypes.array,
    navigation: PropTypes.object,
-   state: PropTypes.bool,
+   type: PropTypes.string,
+   location: PropTypes.string,
 
 };
 

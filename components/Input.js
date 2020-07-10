@@ -8,7 +8,7 @@ import {
 
 function Input(props) {
   return (
-    <TextInput {...props} style={{...styles.input, ...props.style}}/>
+    <TextInput {...props} style={{...props.style, ...styles.input}}/>
   )
 }
 
@@ -17,9 +17,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     width: '100%',
-    borderColor: '#d3d3d3',
-    borderWidth: 1,
-    marginVertical: 12
+    
   }
 
 });

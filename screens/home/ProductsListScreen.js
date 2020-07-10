@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet
 } from 'react-native';
-import AnimatedLoader from "react-native-animated-loader";
+// import AnimatedLoader from "react-native-animated-loader";
 
 import { products } from '../../testData';
 
@@ -78,15 +78,15 @@ function ProductsListScreen(props) {
   return (
     <View style={styles.screen}>
 
-      <AnimatedLoader
+      {/* <AnimatedLoader
         visible={isLoading}
         overlayColor="rgba(255,255,255,0.75)"
         animationStyle={styles.lottie}
         speed={1}
-      />
+      /> */}
 
       <Text style={styles.headerPrimary}>PRODUCTS LISTS SCREEN </Text>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
         <Text style={styles.headerPrimary}> {subCategoryName} products </Text>
 
         <View style={styles.categoryListContainer}>

@@ -10,6 +10,10 @@ import {
 function SelectBox(props) {
     const { mode, selectedValue, status, style, children, press } = props;
 
+    function capitalizeFirstLetter(string) {
+      return string[0].toUpperCase() + string.slice(1);
+    }
+
     return ( 
       <Picker
         enabled={status}
@@ -17,13 +21,11 @@ function SelectBox(props) {
         mode={mode}
         selectedValue={selectedValue}
         style={{ ...styles.pickerHeader, ...style}}
-        onValueChange = {
-          (itemValue, itemIndex) => props.valueChange(itemValue, itemIndex)
-        }
+        onValueChange = { props.valueChange }
       >
         {
           children.map((data) => (
-            <Picker.Item key={data.id} label={data.name} value={data.id} />
+            <Picker.Item key={data.id} label={capitalizeFirstLetter(data.name)} value={data.id} />
           ))
         }
       </Picker>

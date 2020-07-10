@@ -11,7 +11,7 @@ import {
   StyleSheet
 } from 'react-native';
 
-import AnimatedLoader from "react-native-animated-loader";
+// import AnimatedLoader from "react-native-animated-loader";
 import { productMainCategories, products } from '../../testData';
 
 import CategoryList from '../../components/CategoryList';
@@ -91,20 +91,19 @@ useEffect(() => {
     return (
       <View style={styles.screen}>
 
-        <AnimatedLoader
+        {/* <AnimatedLoader
           visible={isLoading}
           overlayColor="rgba(255,255,255,0.75)"
           animationStyle={styles.lottie}
           speed={1}
-        />
+        /> */}
 
         <Text style={styles.headerPrimary}>HOME SCREEN </Text>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
           <Text style={styles.headerPrimary}>Main Categories </Text>
 
           <View style={styles.mainCategoryContainer}>
-            {console.log(trendingProducts)
-            }
+            
             {mainCategories.map((data) =>(
               <TouchableWithoutFeedback
                 key={data.id}

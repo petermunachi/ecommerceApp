@@ -16,15 +16,10 @@ import NetInfo from '@react-native-community/netinfo';
 /*Screens */
 import Home from './routes/Home';
 import Sell from './routes/Sell';
+import Profile from './routes/Profile';
 
 
-function ProfileScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Profile!</Text>
-    </View>
-  );
-}
+
 function NotificationScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -106,26 +101,9 @@ export default class App extends Component {
 
           <Tab.Screen name="Home" component={Home} />
           <Tab.Screen name="Notification" component={NotificationScreen} />
-
-          {/* SELL SCREEN TAB */}
           < Tab.Screen name = "Sell" component={Sell} />
-          {/* < Tab.Screen name = "Sell"
-              component = {SellScreen}
-              listeners = {
-                ({navigation,route}) => ({
-                  tabPress: e => {
-                    this.setState({isLoading: true});
-                    e.preventDefault();
-                    if (this.state.isConnected) navigation.jumpTo('Sell')
-                    this.setState({isLoading: false });
-                  },
-                })
-              }
-          /> */}
-
-
           <Tab.Screen name="WishList" component={WishListScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Profile" component={Profile} />
 
         </Tab.Navigator>
       </NavigationContainer>
