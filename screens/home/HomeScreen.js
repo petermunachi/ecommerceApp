@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Constants from '../../Constants/constants';
+
 
 import {
   View,
@@ -8,14 +10,20 @@ import {
   AsyncStorage,
   ScrollView,
   TouchableWithoutFeedback,
-  StyleSheet
+  StyleSheet,
+  StatusBar,
+  SafeAreaView,
+  FlatList,
+  Button,
 } from 'react-native';
+
 
 // import AnimatedLoader from "react-native-animated-loader";
 import { productMainCategories, products } from '../../testData';
 
 import CategoryList from '../../components/CategoryList';
 import ProductList from '../../components/ProductList';
+import ProductCard from '../../components/ProductCard';
 
 
 
@@ -89,74 +97,120 @@ useEffect(() => {
     ))
 
     return (
-      <View style={styles.screen}>
+      <>
 
-        {/* <AnimatedLoader
-          visible={isLoading}
-          overlayColor="rgba(255,255,255,0.75)"
-          animationStyle={styles.lottie}
-          speed={1}
-        /> */}
+      <SafeAreaView  style={styles.screen}>
+        <StatusBar barStyle="dark-content" 
+          backgroundColor={Constants.statusBarColor} 
+        />
 
-        <Text style={styles.headerPrimary}>HOME SCREEN </Text>
-        <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
-          <Text style={styles.headerPrimary}>Main Categories </Text>
-
-          <View style={styles.mainCategoryContainer}>
-            
-            {mainCategories.map((data) =>(
-              <TouchableWithoutFeedback
-                key={data.id}
-                onPress={() => {
-                  props.navigation.navigate('SubCategoryScreen', {
-                    categoryId: data.id,
-                    categoryName: data.name,
-                  });
-                }}
-              >
-                <View style={styles.categoryContainer}>
-                  <CategoryList
-                    id={data.id}
-                    name={data.name}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            ))}
+       
+        <View style={styles.topContainer}>
+          <View>
+            <Text style={styles.headerSecondary}>Categories (224) </Text>
           </View>
-          <Text style={styles.headerPrimary}>Trending Products </Text>
-          <View style={styles.mainCategoryContainer}>
-            {list}
+
+          <View style={styles.buttonContainer}>
+
+            <View style={styles.button}>
+              <Button color="rgb(255, 128, 128)" title="All" />
+            </View>
+
+            <View style={styles.button}>
+              <Button color="lightgray" title="Fashion" />
+            </View>
+
+            <View style={styles.more}>
+              <Text style={styles.textUnderline}>See All</Text>
+            </View>
           </View>
-        </ScrollView>
-      
-      </View>
+         <View>
+            <Text style={styles.headerPrimary}>Trending</Text>
+          </View>
+
+        </View>
+        <FlatList
+          keyExtractor={(item, index) => index}
+          data={trendingProducts}
+          renderItem={ itemData =>  <ProductCard 
+              productTitle={itemData.item.title}
+              productDescription={itemData.item.description}
+              productPrice={itemData.item.price}
+              productLocation={itemData.item.region}
+              navigation={props.navigation}
+            />
+          }
+        />
+
+          
+      </SafeAreaView>
+      </>
     );
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    alignItems: 'center',
+    marginHorizontal: Constants.scrollViewHorizontal,
+    marginTop: StatusBar.currentHeight+50 || 0,
+
   },
-  categoryContainer: {
-    margin: 10,
+  textUnderline: {
+    color: Constants.darkGray,
+    textTransform: "capitalize",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+    fontSize: 15,
   },
   scrollView: {
-    marginTop: 20,
+    // marginHorizontal: Constants.scrollViewHorizontal,
+      
   },
-  mainCategoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 20,
-    marginBottom: 10
+  topContainer: {
+    marginLeft: -60,
+    padding: 0,
+  },
+  
+  marginBottomMedium:{
+    marginBottom: 8,
+  },
+  marginVerticalMedium: {
+    marginVertical: 20,
   },
   headerPrimary: {
-    textAlign: 'center',
-    fontSize: 20
+    textAlign: 'left',
+    fontSize: 21,
+    fontWeight: "bold",
+    color: Constants.darkGray,
+    textTransform: 'capitalize',
   },
-  lottie: {
-    width: 100,
-    height: 100,
+  headerSecondary: {
+    textAlign: 'left',
+    fontSize: 17,
+    fontWeight: "bold",
+    color: Constants.lightGray,
+    textTransform: 'capitalize',
+  },
+ 
+  buttonContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    marginVertical: 18,
+
+  },
+  button: {
+    width: 80,
+    marginRight: 25,
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 8,
+  },
+  more: {
+    marginTop: 12,
+    marginBottom: 0,
   }
+  
 
 });
 

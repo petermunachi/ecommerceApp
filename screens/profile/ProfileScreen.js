@@ -7,6 +7,8 @@ import {
     Text,
     AsyncStorage,
     ScrollView,
+    ActivityIndicator,
+    Button,
     StyleSheet,
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
@@ -34,11 +36,8 @@ function ProfileScreen(props) {
           if (value !== null) {
             let data = JSON.parse(value);
             //  console.log(data);
-            
             setUserDetails(data);
-            const propertyValues = Object.values(data);
-            setList(propertyValues)
-             
+              
           }
 
        })
@@ -54,7 +53,11 @@ function ProfileScreen(props) {
 
    return ( 
       <Wrapper>
-
+         <ActivityIndicator 
+            animating={isLoading}
+            size="large"
+            color="#00ff00"
+         />
          <View>
             <Text style={styles.headerPrimary}>PROFILE SCREEN </Text>
             
@@ -64,8 +67,7 @@ function ProfileScreen(props) {
                   
                   list.map((data, index) => (
                      
-                     <View key={index} style={styles.categoryContainer}>
-                        
+                     <View key={index} style={styles.categoryContainer}> 
                         <CategoryList
                            id={index}
                            name={`${data}`}
@@ -74,7 +76,11 @@ function ProfileScreen(props) {
                   ))
                }
                </View>
-      
+
+               <View style={styles.buttonContainer}>
+                  <Button title="Log Out" onPress={()=>console.log('log out')} />
+               </View>
+   
             </ScrollView>
          </View>
 
@@ -90,6 +96,10 @@ const styles = StyleSheet.create({
    },
    scrollView: {
       marginTop: 20,
+   },
+   buttonContainer: {
+      width: 300,
+      flexDirection: 'row',
    },
    categoryListContainer: {
       flexDirection: 'row',

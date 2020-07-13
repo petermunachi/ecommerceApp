@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Text,
   StyleSheet,
   AsyncStorage
 } from 'react-native';
 
 import LoginScreen from '../screens/auth/LoginScreen';
-
+import SignupScreen from '../screens/auth/SignupScreen';
 
 
 function Wrapper(props) {
@@ -21,7 +20,7 @@ function Wrapper(props) {
         const value = await AsyncStorage.getItem('loggedIn');
         if (value !== null) {
             // We have data!!
-            console.log(value);
+            // console.log(value);
             setIsLoggedIn(value);
         }
       } catch (error) {
@@ -35,7 +34,6 @@ function Wrapper(props) {
   const activateLoginHandler = (status) => {
     setIsLoggedIn(status)
   }
-
 
   return (
     <>

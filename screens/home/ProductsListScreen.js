@@ -7,9 +7,9 @@ import {
   AsyncStorage,
   ScrollView,
   TouchableWithoutFeedback,
+  ActivityIndicator,
   StyleSheet
 } from 'react-native';
-// import AnimatedLoader from "react-native-animated-loader";
 
 import { products } from '../../testData';
 
@@ -40,13 +40,14 @@ function ProductsListScreen(props) {
       .catch((error) => {
         console.log('Error:', error);
         AsyncStorage.setItem(itemKey, JSON.stringify(products));
+        AsyncStorage.getItem(itemKey)
+          .then((value) => setItems(JSON.parse(value)))
+
         setIsLoading(false);
 
       });
 
-    AsyncStorage.getItem(itemKey)
-      .then((value) => setItems(JSON.parse(value)))
-
+    
   },[])
 
   const { subCategoryName} = props.route.params;
@@ -78,12 +79,11 @@ function ProductsListScreen(props) {
   return (
     <View style={styles.screen}>
 
-      {/* <AnimatedLoader
-        visible={isLoading}
-        overlayColor="rgba(255,255,255,0.75)"
-        animationStyle={styles.lottie}
-        speed={1}
-      /> */}
+      <ActivityIndicator 
+        animating={isLoading}
+        size="large"
+        color="#00ff00"
+      />
 
       <Text style={styles.headerPrimary}>PRODUCTS LISTS SCREEN </Text>
       <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>

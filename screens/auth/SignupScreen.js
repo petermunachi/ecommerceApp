@@ -22,7 +22,7 @@ import { userDetail } from '../../testData';
 
 
 
-function LoginScreen(props) {
+function SignupScreen(props) {
 
   
    // STATES
@@ -126,7 +126,7 @@ function LoginScreen(props) {
    
    return (
       <View style={styles.container}>
-         <Text style={styles.headerPrimary}>LOGIN SCREEN </Text>
+         <Text style={styles.headerPrimary}>SIGNUP SCREEN </Text>
             
          <ActivityIndicator 
             animating={isLoading}
@@ -136,13 +136,24 @@ function LoginScreen(props) {
          <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
             <View style={styles.buttonContainer}>
-               <Button title="Sign In With Google"  onPress={()=>console.log('am google')} />
+               <Button title="Sign In" color="#66ccff"  onPress={()=>console.log('am google')} />
             </View>
             <View style={styles.buttonContainer}>
-               <Button title="Sign In With Facebook" color="#00cc00" onPress={()=>console.log('am facebook')} />
+               <Button title="Sign Up With Google"  onPress={()=>console.log('am facebook')} />
+            </View>
+
+            <View style={styles.buttonContainer}>
+               <Button title="Sign Up With Facebook" color="#00cc00" onPress={()=>console.log('am facebook')} />
             </View>
 
             <View style={styles.inputSection}>
+                <View>
+                  <Text style={styles.headerSecondary}>Name</Text>
+                  <View style={styles.inputContainer}>
+                     <Input autoCapitalize='words' />
+                  </View>
+               </View>
+
                <View>
                   <Text style={styles.headerSecondary}>Email</Text>
                   <View style={styles.inputContainer}>
@@ -153,6 +164,13 @@ function LoginScreen(props) {
                         blurOnSubmit={true}
                         value={email}
                      />
+                  </View>
+               </View>
+
+               <View>
+                  <Text style={styles.headerSecondary}>Phone Number</Text>
+                  <View style={styles.inputContainer}>
+                     <Input autoCapitalize='words' />
                   </View>
                </View>
                
@@ -169,8 +187,15 @@ function LoginScreen(props) {
                   </View>
                </View>
 
+               <View>
+                  <Text style={styles.headerSecondary}>Confirm Password</Text>
+                  <View style={styles.inputContainer}>
+                     <Input autoCapitalize='words' />
+                  </View>
+               </View>
+
                <View style={styles.submitButtonContainer}>
-                  <Button title="Login" color="#ff6347"  onPress={confirmLogInHandler} />
+                  <Button title="Sign Up" color="#ff6347"  onPress={confirmLogInHandler} />
                </View>
 
             </View>
@@ -184,7 +209,7 @@ function LoginScreen(props) {
 
 }
 
-LoginScreen.propTypes = {
+SignupScreen.propTypes = {
    onLogIn: PropTypes.func,
 };
 
@@ -239,6 +264,6 @@ const styles = StyleSheet.create({
 });
 
 
-export default LoginScreen;
+export default SignupScreen;
 
 

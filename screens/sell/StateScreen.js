@@ -7,6 +7,7 @@ import {
     Text,
     AsyncStorage,
     ScrollView,
+    ActivityIndicator,
     TouchableWithoutFeedback,
     StyleSheet,
 } from 'react-native';
@@ -22,13 +23,14 @@ function StateScreen(props) {
 
 
    useEffect(() => {
-         
+      setIsLoading(true);
       fetch('http://locationsng-api.herokuapp.com/api/v1/states')
          .then(response => response.json())
          .then(function (data) {
             AsyncStorage.setItem('nigerianstates', JSON.stringify(data));
             AsyncStorage.getItem('nigerianstates')
                .then((value) => {
+                  setIsLoading(false);
                   if (value !== null) {
                      // console.log(value);
                      setList(JSON.parse(value))
@@ -36,6 +38,7 @@ function StateScreen(props) {
 
                })
                .catch((error) => {
+                  setIsLoading(false);
                   console.log('Error:', error);
                });
 
@@ -53,6 +56,13 @@ function StateScreen(props) {
 
    return ( 
       <View>
+         <View style={styles.loaderContainer}>
+            <ActivityIndicator 
+               animating={isLoading}
+               size="large"
+               color="#00ff00"
+            />
+         </View>
          <Text style={styles.headerPrimary}>STATES SCREEN </Text>
          <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
             <View style={styles.categoryListContainer}>
@@ -97,6 +107,15 @@ const styles = StyleSheet.create({
    },
    scrollView: {
       marginTop: 20,
+   },
+   horizontal: {
+      padding: 10
+   },
+   loaderContainer: {
+      margin: 0,
+      position: 'absolute',
+      top: 50,
+      left: 50,
    },
    categoryListContainer: {
       flexDirection: 'row',

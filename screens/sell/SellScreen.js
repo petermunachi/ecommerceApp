@@ -14,6 +14,7 @@ import {
    Button,
    Image,
    Alert,
+   ActivityIndicator,
    Dimensions,
 } from 'react-native';
 
@@ -28,7 +29,6 @@ import Input from '../../components/Input';
 import Wrapper from '../../HOC/Wrapper';
 import { productMainCategories, productSubCategories, userDetail } from '../../testData';
 import { useFocusEffect } from '@react-navigation/native';
-// import AnimatedLoader from "react-native-animated-loader";
 
 
 
@@ -53,13 +53,15 @@ function SellScreen (props) {
    const w = Dimensions.get('window');
 
    useEffect(() => {
-      
+      setIsLoading(true);
       fetch('/api/productCategories')
          .then(response => response.json())
          .then(function (data) {
+            setIsLoading(false);
             AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
          })
          .catch((error) => {
+            setIsLoading(false);
             AsyncStorage.setItem('productmaincategories', JSON.stringify(productMainCategories));
          });
 
@@ -195,12 +197,11 @@ function SellScreen (props) {
          <View style = {styles.container} >
             <Text style={styles.headerPrimary}>SELL SCREEN </Text>
             
-            {/* <AnimatedLoader 
-               visible = { isLoading }
-               overlayColor = "rgba(255,255,255,0.75)"
-               animationStyle = {styles.lottie}
-               speed = { 1 }
-            /> */}
+            <ActivityIndicator 
+               animating={isLoading}
+               size="large"
+               color="#00ff00"
+            />
             <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
                <View>

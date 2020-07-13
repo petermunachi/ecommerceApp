@@ -8,7 +8,7 @@ import {
     AsyncStorage,
     ScrollView,
     TouchableWithoutFeedback,
-    Switch,
+    ActivityIndicator,
     StyleSheet,
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
@@ -37,10 +37,11 @@ function LGAScreen (props) {
 
     setStateName(location);
 
-             
+    setIsLoading(true);     
     fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${location}/lgas`)
         .then(response => response.json())
         .then(function (data) {
+         setIsLoading(false);
           AsyncStorage.setItem(storageKey, JSON.stringify(data));
            AsyncStorage.getItem(storageKey)
              .then((value) => {
@@ -55,7 +56,8 @@ function LGAScreen (props) {
 
         })
         .catch((error) => {
-          console.log('Error:', error);
+            setIsLoading(true);
+            console.log('Error:', error);
         });
 
  
@@ -67,6 +69,11 @@ function LGAScreen (props) {
 
    return ( 
       <View>
+         <ActivityIndicator 
+            animating={isLoading}
+            size="large"
+            color="#00ff00"
+         />
          <Text style={styles.headerPrimary}>{stateName} LGA SCREEN </Text>
          
          <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>

@@ -6,10 +6,10 @@ import {
   Text,
   AsyncStorage,
   ScrollView,
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 
-// import AnimatedLoader from "react-native-animated-loader";
 import { product } from '../../testData';
 
 function ProductScreen (props) {
@@ -50,12 +50,11 @@ function ProductScreen (props) {
 
   return (
     <View style={styles.screen}>
-      {/* <AnimatedLoader
-        visible={isLoading}
-        overlayColor="rgba(255,255,255,0.75)"
-        animationStyle={styles.lottie}
-        speed={1}
-      /> */}
+      <ActivityIndicator 
+        animating={isLoading}
+        size="large"
+        color="#00ff00"
+      />
       <Text style={styles.headerPrimary}>PRODUCT SCREEN </Text>
       <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
         <Text style={styles.headerPrimary}> {productName} Details </Text>

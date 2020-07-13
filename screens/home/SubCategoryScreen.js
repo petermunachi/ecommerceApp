@@ -7,6 +7,7 @@ import {
   AsyncStorage,
   ScrollView,
   TouchableWithoutFeedback,
+  ActivityIndicator,
   StyleSheet
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
@@ -61,12 +62,11 @@ function SubCategoryScreen(props) {
 
   return (
     <View style={styles.screen}>
-      {/* <AnimatedLoader
-        visible={isLoading}
-        overlayColor="rgba(255,255,255,0.75)"
-        animationStyle={styles.lottie}
-        speed={1}
-      /> */}
+      <ActivityIndicator 
+        animating={isLoading}
+        size="large"
+        color="#00ff00"
+      />
 
       <Text style={styles.headerPrimary}>SUB CATEGORIES SCREEN </Text>
       <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
