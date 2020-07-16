@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    height: 180,
+    height: 145,
     overflow: "hidden",
-    marginTop: 17,
+    marginTop: 12,
   },
 
   logoContainer: {
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 
   descriptionContainer: {
     width: "50%",
-    paddingVertical: 80,
+    paddingVertical: 45,
     paddingLeft: 8,
     paddingRight: 0,
     alignItems: "flex-start"
@@ -118,13 +118,13 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   marginVertical: {
-      marginVertical: 14,
+      marginVertical: 8,
   },
   priceContainer:{
-    backgroundColor: 'rgb(230, 255, 230)',
+    backgroundColor: Constants.lightGreen,
     borderRadius: 8,
     width: 80,
-    padding: 5,
+    padding: 3,
   },
   price: {
       textAlign: "center",

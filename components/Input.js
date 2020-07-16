@@ -15,7 +15,7 @@ function Input(props) {
 const styles = StyleSheet.create({
 
   input: {
-    height: 40,
+    height: "100%",
     width: '100%',
     
   }

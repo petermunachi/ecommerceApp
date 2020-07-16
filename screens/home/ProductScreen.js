@@ -25,10 +25,12 @@ function ProductScreen (props) {
 
     let item = `${productName}details`.replace(/\s/g, "");
 
-    fetch(`/api/product/:${productId}`)
+    fetch(`http://192.168.43.12:3000/posts`)
       .then((resp) => resp.json())
       // eslint-disable-next-line no-unused-vars
       .then(function(data) {
+        console.log(data);
+        
         AsyncStorage.setItem(item, JSON.stringify(data));
         setIsLoading(false);
 
@@ -60,7 +62,7 @@ function ProductScreen (props) {
         <Text style={styles.headerPrimary}> {productName} Details </Text>
 
         <View style={styles.categoryListContainer}>
-        {console.log(Object.keys(productDetails))}
+        {/* {console.log(Object.keys(productDetails))} */}
         </View>
 
       </ScrollView>

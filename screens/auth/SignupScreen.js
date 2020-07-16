@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { 
    View,
@@ -8,9 +8,11 @@ import {
    AsyncStorage,
    Alert,
    StyleSheet,
-   Button,
+   TouchableNativeFeedback,
    ScrollView,
    ActivityIndicator,
+   StatusBar,
+   SafeAreaView,
    Keyboard,
    
 } from 'react-native';
@@ -18,6 +20,10 @@ import {
 
 import Input from '../../components/Input';
 import { userDetail } from '../../testData';
+import ImageDisplay from '../../components/ImageDisplay';
+import Constants from '../../Constants/constants';
+import Wrapper from '../../HOC/Wrapper';
+
 
 
 
@@ -125,85 +131,122 @@ function SignupScreen(props) {
 
    
    return (
-      <View style={styles.container}>
-         <Text style={styles.headerPrimary}>SIGNUP SCREEN </Text>
-            
-         <ActivityIndicator 
-            animating={isLoading}
-            size="large"
-            color="#00ff00"
-         />
-         <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
-            <View style={styles.buttonContainer}>
-               <Button title="Sign In" color="#66ccff"  onPress={()=>console.log('am google')} />
-            </View>
-            <View style={styles.buttonContainer}>
-               <Button title="Sign Up With Google"  onPress={()=>console.log('am facebook')} />
-            </View>
+      <SafeAreaView style={styles.container}>
+         <LinearGradient
+            colors = {
+               ['rgb(255, 102, 0)',  'rgb(153, 0, 115)']
+            }
+            style = {
+               styles.container
+            }
+         >
+            <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
-            <View style={styles.buttonContainer}>
-               <Button title="Sign Up With Facebook" color="#00cc00" onPress={()=>console.log('am facebook')} />
-            </View>
 
-            <View style={styles.inputSection}>
-                <View>
-                  <Text style={styles.headerSecondary}>Name</Text>
-                  <View style={styles.inputContainer}>
-                     <Input autoCapitalize='words' />
-                  </View>
+               <View style={styles.imageContainer}>
+                  <ImageDisplay
+                  style={styles.tinyLogo}
+                  source={require('../../assets/splash.png')} 
+                  />
                </View>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Email</Text>
-                  <View style={styles.inputContainer}>
-                     <Input 
-                        textContentType="emailAddress"
-                        keyboardType="email-address" 
-                        onChangeText={text => onChangeTextHandler(text, 'email')}
-                        blurOnSubmit={true}
-                        value={email}
-                     />
-                  </View>
-               </View>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Phone Number</Text>
-                  <View style={styles.inputContainer}>
-                     <Input autoCapitalize='words' />
-                  </View>
-               </View>
-               
-               <View>   
-                  <Text style={styles.headerSecondary}>Password</Text>
-                  <View style={styles.inputContainer}>
-                     <Input 
-                        onChangeText={text => onChangeTextHandler(text, 'password')}
-                        blurOnSubmit={true}
-                        value={password}
-                        secureTextEntry={true}
-                        textContentType = "password"
-                     />
-                  </View>
-               </View>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Confirm Password</Text>
-                  <View style={styles.inputContainer}>
-                     <Input autoCapitalize='words' />
-                  </View>
-               </View>
-
-               <View style={styles.submitButtonContainer}>
-                  <Button title="Sign Up" color="#ff6347"  onPress={confirmLogInHandler} />
-               </View>
-
-            </View>
-
-         </ScrollView>
 
             
-      </View>
+            <ActivityIndicator 
+               animating={isLoading}
+               size="large"
+               color="#00ff00"
+            />
+
+              
+
+               <View style={styles.inputSection}>
+                  <View style={styles.headerContainer}>
+                     <Text style={styles.headerPrimary}>Signup </Text>
+                     <Text style={styles.headerSecondary}>Signup for Shoppay account</Text>
+
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input
+                           placeholder="Name"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           autoCapitalize='words' 
+                        />
+                     </View>
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input 
+                           placeholder="Email Address"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           textContentType="emailAddress"
+                           keyboardType="email-address" 
+                           onChangeText={text => onChangeTextHandler(text, 'email')}
+                           blurOnSubmit={true}
+                           value={email}
+                        />
+                     </View>
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input 
+                           placeholder="Phone Number"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input}   
+                        />
+                     </View>
+                  </View>
+                  
+                  <View>   
+                     <View style={styles.inputContainer}>
+                        <Input
+                           placeholder="Password"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input}  
+                           onChangeText={text => onChangeTextHandler(text, 'password')}
+                           blurOnSubmit={true}
+                           value={password}
+                           secureTextEntry={true}
+                           textContentType = "password"
+                        />
+                     </View>
+                  </View>
+
+                 
+
+                  <View style={styles.submitButtonSection}>
+                     <TouchableNativeFeedback 
+                        useForeground={false} 
+                        onPress = {()=>console.log('hello')}
+                        background = {
+                           TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
+                        }
+                     >
+
+                        <View style={styles.submitButtonContainer}>
+                           <Text style={styles.submitButton}>Signup for Shoopay</Text>
+                        </View>
+                     </TouchableNativeFeedback>
+                     <Text style={styles.headerSecondary}>All ready have an account? <Text style={styles.textUnderline}> Sign In</Text></Text>
+                  </View>
+
+               </View>
+
+            </ScrollView>
+
+
+         </LinearGradient>
+                  
+
+      </SafeAreaView>
+
+      
         
    )
 
@@ -215,50 +258,91 @@ SignupScreen.propTypes = {
 
 const styles = StyleSheet.create({
   
-   lottie: {
-      width: 100,
-      height: 100,
+   container: {      
+      flex: 1,
+      justifyContent: "center",
+      
    },
 
-   container: {
-      flex: 1, 
-      padding: 15,
-      paddingTop: 0,
+   imageContainer: {
+      alignSelf: "center",
+      width: "50%",
+      height: 100,
+
+   },
+   input: {
+      paddingLeft: 10,
+      fontSize: 14,
+      fontWeight: "bold",
+   },
+
+   textUnderline: {
+      color: "white",
+      textTransform: "capitalize",
+      textDecorationLine: "underline",
+      fontWeight: "bold",
+      fontSize: 17,
    },
 
    inputContainer: {
       flexDirection: 'row',
-      marginVertical: 12,
+      paddingVertical: 12,
+      marginVertical: 5,
       alignItems: 'center',
-      borderColor: '#d3d3d3',
+      borderColor: Constants.placeholderColor,
       borderWidth: 1,
-      width: 300
+      borderRadius: 5,
+      backgroundColor: "white",
+      height: 45,
+      width: "100%"
    },
 
    buttonContainer: {
       marginVertical: 10,
    },
-   submitButtonContainer: {
-      marginVertical: 10,
+   submitButtonSection: {
       justifyContent: 'center',
       alignItems: 'center',
-      // width: 500,
+   },
+   submitButtonContainer: {
+      marginTop: 30,
+      backgroundColor: "white",
+      paddingVertical: 10,
+      paddingHorizontal: 40,
+      marginBottom: 20,
+
+   },
+   submitButton: {
+      fontSize: 17,
+      color: Constants.darkGray,
+      fontWeight: "bold",
+
    },
    inputSection: {
-      marginTop: 40,
+      width: "88%",
+      backgroundColor: Constants.transparent,
+      alignSelf:"center",
+      padding: 20,
+      marginBottom: 60,
+      overflow: "hidden",
+      borderRadius: 20,
    },
-   
-   headerPrimary: {
-      textAlign: 'center',
-      fontSize: 20,
-      padding: 10,
-      marginVertical: 12
 
+   headerPrimary: {
+      textAlign: 'left',
+      color: "white",
+      fontSize: 25,
+      fontWeight: "bold",
+      marginVertical: 9,
+
+   },
+   headerContainer: { 
+      marginBottom: 30,
    },
    headerSecondary: {
       textAlign: 'left',
       fontSize: 16,
-      color: '#808080',
+      color: "lightgray",
    },
    
 });

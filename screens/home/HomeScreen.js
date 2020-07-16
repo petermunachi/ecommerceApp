@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Constants from '../../Constants/constants';
 
 
 import {
   View,
   Text,
   AsyncStorage,
-  ScrollView,
   TouchableWithoutFeedback,
+  TouchableNativeFeedback,
   StyleSheet,
   StatusBar,
   SafeAreaView,
+  VirtualizedList,
   FlatList,
   Button,
 } from 'react-native';
@@ -24,6 +24,8 @@ import { productMainCategories, products } from '../../testData';
 import CategoryList from '../../components/CategoryList';
 import ProductList from '../../components/ProductList';
 import ProductCard from '../../components/ProductCard';
+import Constants from '../../Constants/constants';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
@@ -32,20 +34,20 @@ function HomeScreen (props) {
   const [mainCategories, setMainCategories] = useState([]);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
+  const [showCategoriesText, setShowCategoriesText] = useState("See All");
 
  
 useEffect(() => {
 
-  fetch('/api/productCategories')
+  fetch(`http://${Constants.host}:3000/shoppay/get_mainCategory`)
     .then(response => response.json())
     .then((data) => {
+      console.log(data);
       AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
-      // setMainCategories(productMainCategories)
     })
     .catch(err => {
       console.log('Error', err);
-      AsyncStorage.setItem('productmaincategories', JSON.stringify(productMainCategories));
-      // setMainCategories(productMainCategories)
     });
 
   fetch('/api/trendingProducts')
@@ -71,6 +73,26 @@ useEffect(() => {
   
 
 }, []);
+
+let categoriesList = null;
+
+if (showCategories) {
+  categoriesList = mainCategories.map((data) => (
+    <TouchableNativeFeedback 
+      useForeground={false} 
+      background={TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)}
+      key={data._id}
+    >
+      <View style={styles.mainCategoriesContainer} >
+        <Text style={styles.mainCategoriesText}>{data.name}</Text>
+      </View>
+
+    </TouchableNativeFeedback>
+
+  ))
+    
+  
+}
   
 
     const list = trendingProducts.map((data) =>(
@@ -105,31 +127,70 @@ useEffect(() => {
         />
 
        
-        <View style={styles.topContainer}>
-          <View>
-            <Text style={styles.headerSecondary}>Categories (224) </Text>
-          </View>
-
-          <View style={styles.buttonContainer}>
-
-            <View style={styles.button}>
-              <Button color="rgb(255, 128, 128)" title="All" />
+        <View>
+          <View style={styles.topContainer}>
+            <View>
+              <Text style={styles.headerSecondary}>Categories (224) </Text>
             </View>
 
-            <View style={styles.button}>
-              <Button color="lightgray" title="Fashion" />
+            <View style={styles.buttonContainer}>
+
+              <View style={styles.button}>
+                <Button color="rgb(255, 128, 128)" title="All" />
+              </View>
+
+              <View style={styles.button}>
+                <Button color="lightgray" title="Fashion" />
+              </View>
+
+
+              <TouchableNativeFeedback 
+                useForeground={false} 
+                onPress = {
+                  () => {
+                    setShowCategories(prevState=> !prevState);
+                    if (showCategoriesText == "See All")
+                      setShowCategoriesText("Show Less");
+                    else
+                      setShowCategoriesText("See All");
+                  }
+                }
+                background = {
+                    TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
+                }
+              >
+
+                <View style={styles.more}>
+                  <Text style={styles.textUnderline}>{showCategoriesText}</Text>
+                </View>
+              </TouchableNativeFeedback>
             </View>
 
-            <View style={styles.more}>
-              <Text style={styles.textUnderline}>See All</Text>
-            </View>
+
+            
           </View>
-         <View>
-            <Text style={styles.headerPrimary}>Trending</Text>
-          </View>
+           
 
         </View>
+
+          
+
         <FlatList
+          ListHeaderComponent={
+            <>
+              <View style={styles.mainCategoriesSection}>
+                {categoriesList}
+
+              </View>
+              <View>
+                <Text style={styles.headerPrimary}>Trending</Text>
+              </View>
+            </>}
+          ListEmptyComponent={
+            <>
+              <Text>No Category Found</Text>
+            </>
+          }
           keyExtractor={(item, index) => index}
           data={trendingProducts}
           renderItem={ itemData =>  <ProductCard 
@@ -151,9 +212,8 @@ useEffect(() => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: 'center',
     marginHorizontal: Constants.scrollViewHorizontal,
-    marginTop: StatusBar.currentHeight+50 || 0,
+    marginTop: StatusBar.currentHeight || 0,
 
   },
   textUnderline: {
@@ -168,19 +228,43 @@ const styles = StyleSheet.create({
       
   },
   topContainer: {
-    marginLeft: -60,
-    padding: 0,
+
+    marginVertical: 0,
+    flexDirection: "row",
+    flexWrap: "wrap",
+
+
   },
   
   marginBottomMedium:{
     marginBottom: 8,
   },
+  mainCategoriesSection: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginVertical: 13,
+
+  },
+  mainCategoriesText: {
+   textAlign: "justify",
+   textTransform: "capitalize",
+   fontWeight: "bold",
+   color: Constants.lightGray,
+  },
+  mainCategoriesContainer: {
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: Constants.lightGreen,
+    padding: 10,
+    elevation: 5,
+
+  },
   marginVerticalMedium: {
-    marginVertical: 20,
+    marginVertical: 18,
   },
   headerPrimary: {
     textAlign: 'left',
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: "bold",
     color: Constants.darkGray,
     textTransform: 'capitalize',
@@ -194,17 +278,16 @@ const styles = StyleSheet.create({
   },
  
   buttonContainer: {
-    width: '100%',
     flexDirection: 'row',
-    marginVertical: 18,
+    marginVertical: 15,
 
   },
   button: {
     width: 80,
     marginRight: 25,
-    borderRadius: 10,
+    borderRadius: 8,
     overflow: 'hidden',
-    elevation: 8,
+    elevation: 2,
   },
   more: {
     marginTop: 12,

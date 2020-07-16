@@ -20,7 +20,6 @@ const Stack = createStackNavigator();
 
 const App = () => {
 
-  const [firstLoad, setFirstLoad] = useState(true)
 
 
   function WishListScreen() {
@@ -32,15 +31,7 @@ const App = () => {
   }
 
 
-  useEffect(() => {
-    if (firstLoad) {
-      setTimeout(() => {
-        setFirstLoad(false)
-      }, 5000);
-      
-    }
-    
-  }, [firstLoad])
+  
 
   
 
@@ -49,56 +40,43 @@ const App = () => {
 
     <NavigationContainer>    
     
-      {
-        firstLoad == false ? (<Tab.Navigator
-              screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                  let iconName;
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
 
-                  if (route.name === 'Home') {
-                    iconName = focused ? 'md-home' : 'ios-home';
-                  } else if (route.name === 'Notification') {
-                    iconName = focused ? 'ios-notifications' : 'ios-notifications-outline';
-                  } else if (route.name === 'Sell') {
-                    iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
-                  } else if (route.name === 'WishList') {
-                    iconName = focused ? 'ios-star' : 'ios-star-outline';
-                  } else if (route.name === 'Profile') {
-                    iconName = focused ? 'md-person' : 'md-person';
-                  }
+            if (route.name === 'Home') {
+              iconName = focused ? 'md-home' : 'ios-home';
+            } else if (route.name === 'Notification') {
+              iconName = focused ? 'ios-notifications' : 'ios-notifications-outline';
+            } else if (route.name === 'Sell') {
+              iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
+            } else if (route.name === 'WishList') {
+              iconName = focused ? 'ios-star' : 'ios-star-outline';
+            } else if (route.name === 'Profile') {
+              iconName = focused ? 'md-person' : 'md-person';
+            }
 
-                  return <Ionicons name={iconName} size={size} color={color} />;
-                },
-              })}
-              tabBarOptions={{
-                activeTintColor: 'tomato',
-                inactiveTintColor: 'gray',
-                keyboardHidesTabBar: true
-              }}
-            >
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+          keyboardHidesTabBar: true
+        }}
+      >
 
-              <Tab.Screen name="Home" component={Home} />
-              <Tab.Screen name="Notification" component={Notification} />
-              <Tab.Screen name = "Sell" component={Sell} />
-              <Tab.Screen name="WishList" component={WishListScreen} />
-              <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Notification" component={Notification} />
+        <Tab.Screen name = "Sell" component={Sell} />
+        <Tab.Screen name="WishList" component={WishListScreen} />
+        <Tab.Screen name="Profile" component={Profile} />
 
-            </Tab.Navigator>)
+      </Tab.Navigator>
 
 
-        : (
-            <Stack.Navigator>
-              <Stack.Screen 
-                name="Index" 
-                component={IndexScreen}
-                options={{ 
-                  headerShown: false,
-         
-                }}
-              />
-            </Stack.Navigator>
-        )
-      }
+       
     </NavigationContainer>
    
   );

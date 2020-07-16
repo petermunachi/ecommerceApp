@@ -28,7 +28,7 @@ function Home() {
         component={HomeScreen}
         options={{ 
           headerTitle: props => <Header {...props} title='Home' />,
-          headerTransparent: true,
+          // headerTransparent: true,
           headerStatusBarHeight: Constants.statusBarHeight,
           headerBackground: () => (
             <LinearGradient
