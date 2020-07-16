@@ -39,7 +39,7 @@ function Wrapper(props) {
     <>
       {
         // isLoggedIn == 'true' ? props.children : 
-        <LoginScreen onLogIn={activateLoginHandler} />
+        <SignupScreen onLogIn={activateLoginHandler} />
       }
     </>
   );

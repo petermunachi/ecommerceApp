@@ -6,6 +6,7 @@ import {
    View,
    Text,
    AsyncStorage,
+   Picker,
    Alert,
    StyleSheet,
    TouchableNativeFeedback,
@@ -19,6 +20,7 @@ import {
 
 
 import Input from '../../components/Input';
+import SelectBox from '../../components/SelectBox';
 import { userDetail } from '../../testData';
 import ImageDisplay from '../../components/ImageDisplay';
 import Constants from '../../Constants/constants';
@@ -36,82 +38,56 @@ function SignupScreen(props) {
    const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [phoneNumber, setPhoneNumber] = useState('');
+   const [firstName, setFirstName] = useState('');
+   const [lastName, setLastName] = useState('');
+   const [gender, setGender] = useState('male');
    
    
 
    const confirmLogInHandler = () => {
 
-      const checkInput = validateInputHandler();
-      if (checkInput) {
-         const data = { userEmail: email, userPassword: password };
-         setIsLoading(true)
+      setIsLoading(true);
+      const data = {
+         userEmail: email.toLowerCase(),
+         userPassword: password.toLowerCase(),
+         userFirstName: firstName,
+         userLastName: lastName,
+         userPhoneNumber: phoneNumber,
+         userGender: gender,
+      };
 
-         fetch('api/profile', {
-            method: 'POST', // or 'PUT'
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-         })
-         .then(response => response.json())
-         .then(data => {
-            setIsLoading(false)
+      fetch(`http://${Constants.host}:3000/shoppay/signup`, {
+         method: 'POST', 
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+         setIsLoading(false)
 
-            console.log('Success:', data);
-            if (data) {
-               AsyncStorage.setItem('userData', JSON.stringify(data));
-               AsyncStorage.setItem('loggedIn', 'true');
-   
-               alertHandler('You are now logged in');
-               props.onLogIn('true');
-               
-            }
-         })
-         .catch((error) => {
-            // console.error('Error:', error);
-            setIsLoading(false)
-
-            AsyncStorage.setItem('userData', JSON.stringify(userDetail));
-            AsyncStorage.setItem('loggedIn', 'true');
-            alertHandler('You are now logged in');
+         console.log(data);
+         if (data.status == 1) { 
             Alert.alert(
-               '',
-               'You are now logged in',
-               [{ text: 'Ok', onPress: ()=> props.onLogIn('true') }]
-            )
-            props.onLogIn('true');
+            '',
+            'You Have Successfully Signup',
+            [{ text: 'Ok', onPress: ()=> console.log('You Have Successfully Signup') }]
+         )
+         } else if (data.status == 0) {
+            alertHandler(data.msg)
+         }
 
-         });
+      })
+      .catch((error) => {
+         setIsLoading(false)
+         console.error('Error:', error);
+      });
 
-      }
-
-    Keyboard.dismiss();
-
-  }
-   const validateInputHandler = () => {
-
-      let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      let passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/;
-
-      if (email === '') {
-         alertHandler('Email Is Required');
-         return false;
-      }
-      if (emailReg.test(email) === false) {
-         alertHandler('Enter a valid Email Address');
-         return false;
-      }
-      if (password === '') {
-         alertHandler('Password Is Required');
-         return false;
-      }
-      if (passwordReg.test(password) === false) {
-         alertHandler('Password Must contain Letter and Alphabets');
-         return false;
-      }
-      return true;
-
+      Keyboard.dismiss();
    }
+  
    const alertHandler = (field) => {
       Alert.alert(
          '',
@@ -119,19 +95,22 @@ function SignupScreen(props) {
          [{text: 'Ok', style: 'cancel' }]
       )
 
-  }
+   }
 
-  const onChangeTextHandler = (inputText, state) => {
-     if(state === 'email') setEmail(inputText);
-     if(state === 'password') setPassword(inputText);
-  }
+   const onChangeTextHandler = (inputText, state) => {
+      if(state === 'email') setEmail(inputText);
+      if(state === 'password') setPassword(inputText);
+      if(state === 'phoneNumber') setPhoneNumber(inputText);
+      if(state === 'firstName') setFirstName(inputText);
+      if(state === 'lastName') setLastName(inputText);
+      if(state === 'gender') setGender(inputText);
+   }
 
 
 
 
    
    return (
-
       <SafeAreaView style={styles.container}>
          <LinearGradient
             colors = {
@@ -151,14 +130,18 @@ function SignupScreen(props) {
                   />
                </View>
 
+               {isLoading ?
+                  <View style={styles.loading}>
+                     <ActivityIndicator 
+                        animating={isLoading}
+                        size={70}
+                        color = "rgb(153, 0, 115)"
+                     />
+                  </View>
+               
+                 : null
+               }
             
-            <ActivityIndicator 
-               animating={isLoading}
-               size="large"
-               color="#00ff00"
-            />
-
-              
 
                <View style={styles.inputSection}>
                   <View style={styles.headerContainer}>
@@ -170,10 +153,27 @@ function SignupScreen(props) {
                   <View>
                      <View style={styles.inputContainer}>
                         <Input
-                           placeholder="Name"
+                           placeholder="First Name"
                            placeholderTextColor="#cccccc"
                            style={styles.input} 
                            autoCapitalize='words' 
+                           onChangeText={text => onChangeTextHandler(text, 'firstName')}
+                           blurOnSubmit={true}
+                           value={firstName}
+                        />
+                     </View>
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input
+                           placeholder="Last Name"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           autoCapitalize='words' 
+                           onChangeText={text => onChangeTextHandler(text, 'lastName')}
+                           blurOnSubmit={true}
+                           value={lastName}
                         />
                      </View>
                   </View>
@@ -184,8 +184,8 @@ function SignupScreen(props) {
                            placeholder="Email Address"
                            placeholderTextColor="#cccccc"
                            style={styles.input} 
-                           textContentType="emailAddress"
                            keyboardType="email-address" 
+                           textContentType="emailAddress"
                            onChangeText={text => onChangeTextHandler(text, 'email')}
                            blurOnSubmit={true}
                            value={email}
@@ -198,7 +198,11 @@ function SignupScreen(props) {
                         <Input 
                            placeholder="Phone Number"
                            placeholderTextColor="#cccccc"
-                           style={styles.input}   
+                           style={styles.input} 
+                           keyboardType="phone-pad"
+                           onChangeText={text => onChangeTextHandler(text, 'phoneNumber')}
+                           blurOnSubmit={true}
+                           value={phoneNumber}  
                         />
                      </View>
                   </View>
@@ -218,15 +222,28 @@ function SignupScreen(props) {
                      </View>
                   </View>
 
+                  <View>
+                     <View style={styles.selectBoxContainer}>
+                        
+                        <Picker
+                           selectedValue={gender}
+                           enabled={true}
+                           style={styles.selectBox}
+                           onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                        >
+                           <Picker.Item label="Male" value="male" />
+                           <Picker.Item label="Female" value="female" />
+                        </Picker>
+                     </View>
+                  </View>
+
                  
 
                   <View style={styles.submitButtonSection}>
                      <TouchableNativeFeedback 
                         useForeground={false} 
-                        onPress = {()=>console.log('hello')}
-                        background = {
-                           TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
-                        }
+                        onPress = {confirmLogInHandler}
+                        background = {TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)}
                      >
 
                         <View style={styles.submitButtonContainer}>
@@ -245,9 +262,6 @@ function SignupScreen(props) {
                   
 
       </SafeAreaView>
-
-      
-        
    )
 
 }
@@ -264,6 +278,18 @@ const styles = StyleSheet.create({
       
    },
 
+   loading: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: "rgba(191, 189, 189, 0.50)",
+      zIndex: 100,
+   },
+
    imageContainer: {
       alignSelf: "center",
       width: "50%",
@@ -274,6 +300,8 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
       fontSize: 14,
       fontWeight: "bold",
+      color: Constants.darkGray,
+
    },
 
    textUnderline: {
@@ -290,6 +318,27 @@ const styles = StyleSheet.create({
       marginVertical: 5,
       alignItems: 'center',
       borderColor: Constants.placeholderColor,
+      borderWidth: 1,
+      borderRadius: 5,
+      backgroundColor: "white",
+      height: 45,
+      width: "100%"
+   },
+
+   selectBox: {
+      height: "100%",
+      width: '100%',
+      fontSize: 14,
+      fontWeight: "bold",
+      color: Constants.darkGray,
+
+   },
+   selectBoxContainer: {
+      flexDirection: 'row',
+      marginVertical: 12,
+      alignItems: 'center',
+      borderColor: Constants.placeholderColor,
+      justifyContent: "center",
       borderWidth: 1,
       borderRadius: 5,
       backgroundColor: "white",
