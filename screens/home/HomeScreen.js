@@ -45,6 +45,9 @@ useEffect(() => {
     .then((data) => {
       console.log(data);
       AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
+      AsyncStorage.getItem('productmaincategories')
+        .then((value) => setMainCategories(JSON.parse(value)))
+
     })
     .catch(err => {
       console.log('Error', err);
@@ -62,15 +65,9 @@ useEffect(() => {
       // setMainCategories(productMainCategories)
     });
 
-  AsyncStorage.getItem('productmaincategories')
-    .then((value) => setMainCategories(JSON.parse(value)))
-
+  
   AsyncStorage.getItem('trendingProducts')
     .then((value) => setTrendingProducts(JSON.parse(value)))
-
-
-    
-  
 
 }, []);
 
@@ -180,12 +177,12 @@ if (showCategories) {
             <>
               <View style={styles.mainCategoriesSection}>
                 {categoriesList}
-
               </View>
               <View>
                 <Text style={styles.headerPrimary}>Trending</Text>
               </View>
-            </>}
+            </>
+          }
           ListEmptyComponent={
             <>
               <Text>No Category Found</Text>

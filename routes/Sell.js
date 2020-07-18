@@ -3,8 +3,12 @@
 import React from 'react';
 import { createStackNavigator, HeaderBackButton  } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+
+
 
 import Header from '../components/layout/Header';
+import Constants from '../Constants/constants';
 
 //SCREENS
 import SellScreen from '../screens/sell/SellScreen';
@@ -24,7 +28,23 @@ function Sell() {
         name="SellScreen"
         component={SellScreen}
         options={{ 
-          headerTitle: props => <Header {...props} />,
+          headerTitle: props => <Header {...props} title='Sell' />,
+          // headerTransparent: true,
+          headerStatusBarHeight: Constants.statusBarHeight,
+          headerBackground: () => (
+            <LinearGradient
+              colors = {
+                [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+              }
+              locations = {[0, 0.8]}
+              start={[0, 0]}
+              end={[0, 0.2]}
+              style={{
+                flex: 1,
+                // justifyContent: 'center',
+              }}
+            />
+          ),
          
         }}
       />

@@ -11,7 +11,6 @@ import {
    TouchableNativeFeedback,
    ScrollView,
    ActivityIndicator,
-   StatusBar,
    SafeAreaView,
    Keyboard,
    
@@ -19,99 +18,69 @@ import {
 
 
 import Input from '../../components/Input';
-import { userDetail } from '../../testData';
 import ImageDisplay from '../../components/ImageDisplay';
 import Constants from '../../Constants/constants';
-import Wrapper from '../../HOC/Wrapper';
 
 
 
 
 
-function SignupScreen(props) {
+function LoginScreen(props) {
 
   
    // STATES
-  
+
    const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   
-   
 
    const confirmLogInHandler = () => {
 
-      const checkInput = validateInputHandler();
-      if (checkInput) {
-         const data = { userEmail: email, userPassword: password };
-         setIsLoading(true)
+      setIsLoading(true);
+      const data = {
+         email: email.toLowerCase(),
+         password: password.toLowerCase(),
+        
+      };
 
-         fetch('api/profile', {
-            method: 'POST', // or 'PUT'
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-         })
-         .then(response => response.json())
-         .then(data => {
-            setIsLoading(false)
 
-            console.log('Success:', data);
-            if (data) {
-               AsyncStorage.setItem('userData', JSON.stringify(data));
-               AsyncStorage.setItem('loggedIn', 'true');
-   
-               alertHandler('You are now logged in');
-               props.onLogIn('true');
-               
-            }
-         })
-         .catch((error) => {
-            // console.error('Error:', error);
-            setIsLoading(false)
+      fetch(`http://${Constants.host}:3000/shoppay/login`, {
+         method: 'POST', 
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+         setIsLoading(false)
 
-            AsyncStorage.setItem('userData', JSON.stringify(userDetail));
-            AsyncStorage.setItem('loggedIn', 'true');
-            alertHandler('You are now logged in');
+         console.log(data);
+
+         if (data.status == 1) { 
             Alert.alert(
-               '',
-               'You are now logged in',
-               [{ text: 'Ok', onPress: ()=> props.onLogIn('true') }]
-            )
-            props.onLogIn('true');
+            '',
+            'You have been logged in',
+            [{ text: 'Ok', onPress: ()=> {
+               AsyncStorage.setItem('loggedIn', 'true');
+               console.log('You have been logged in');
+               props.navigation.navigate('HomeScreen');
 
-         });
+            } }]
+         )
+         } else if (data.status == 0) {
+            alertHandler(data.msg)
+         }
 
-      }
+      })
+      .catch((error) => {
+         setIsLoading(false)
+         console.error('Error:', error);
+      });
 
-    Keyboard.dismiss();
-
-  }
-   const validateInputHandler = () => {
-
-      let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      let passwordReg = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/;
-
-      if (email === '') {
-         alertHandler('Email Is Required');
-         return false;
-      }
-      if (emailReg.test(email) === false) {
-         alertHandler('Enter a valid Email Address');
-         return false;
-      }
-      if (password === '') {
-         alertHandler('Password Is Required');
-         return false;
-      }
-      if (passwordReg.test(password) === false) {
-         alertHandler('Password Must contain Letter and Alphabets');
-         return false;
-      }
-      return true;
-
+      Keyboard.dismiss();
    }
+  
    const alertHandler = (field) => {
       Alert.alert(
          '',
@@ -119,16 +88,14 @@ function SignupScreen(props) {
          [{text: 'Ok', style: 'cancel' }]
       )
 
-  }
+   }
 
-  const onChangeTextHandler = (inputText, state) => {
-     if(state === 'email') setEmail(inputText);
-     if(state === 'password') setPassword(inputText);
-  }
-
-
-
-
+   const onChangeTextHandler = (inputText, state) => {
+      if(state === 'email') setEmail(inputText);
+      if(state === 'password') setPassword(inputText);
+      
+   }
+   
    
    return (
 
@@ -152,11 +119,17 @@ function SignupScreen(props) {
                </View>
 
             
-               <ActivityIndicator 
-                  animating={isLoading}
-                  size="large"
-                  color="#00ff00"
-               />
+               {isLoading ?
+                  <View style={styles.loading}>
+                     <ActivityIndicator 
+                        animating={isLoading}
+                        size={70}
+                        color = "rgb(153, 0, 115)"
+                     />
+                  </View>
+               
+                 : null
+               }
 
               
 
@@ -204,7 +177,7 @@ function SignupScreen(props) {
                   <View style={styles.submitButtonSection}>
                      <TouchableNativeFeedback 
                         useForeground={false} 
-                        onPress = {()=>console.log('hello')}
+                        onPress = {confirmLogInHandler}
                         background = {
                            TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
                         }
@@ -214,7 +187,11 @@ function SignupScreen(props) {
                            <Text style={styles.submitButton}>Login to Shoopay</Text>
                         </View>
                      </TouchableNativeFeedback>
-                     <Text style={styles.headerSecondary}>Don't have an account? <Text style={styles.textUnderline}> Register Now</Text></Text>
+                     <Text style={styles.headerSecondary}>
+                        Don't have an account? 
+                        <Text onPress={()=>props.navigation.navigate("SignupScreen")} style={styles.textUnderline}> Register Now</Text>
+                     </Text>
+                  
                   </View>
 
                </View>
@@ -233,7 +210,7 @@ function SignupScreen(props) {
 
 }
 
-SignupScreen.propTypes = {
+LoginScreen.propTypes = {
    onLogIn: PropTypes.func,
 };
 
@@ -249,12 +226,25 @@ const styles = StyleSheet.create({
       alignSelf: "center",
       width: "50%",
       height: 100,
+      marginTop: 50,
 
    },
    input: {
       paddingLeft: 10,
       fontSize: 14,
       fontWeight: "bold",
+   },
+
+   loading: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: "rgba(191, 189, 189, 0.50)",
+      zIndex: 100,
    },
 
    textUnderline: {
@@ -329,6 +319,6 @@ const styles = StyleSheet.create({
 });
 
 
-export default SignupScreen;
+export default LoginScreen;
 
 

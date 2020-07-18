@@ -34,7 +34,6 @@ function SignupScreen(props) {
 
   
    // STATES
-  
    const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
@@ -44,18 +43,18 @@ function SignupScreen(props) {
    const [gender, setGender] = useState('male');
    
    
-
-   const confirmLogInHandler = () => {
+   const confirmSignupHandler = () => {
 
       setIsLoading(true);
       const data = {
-         userEmail: email.toLowerCase(),
-         userPassword: password.toLowerCase(),
-         userFirstName: firstName,
-         userLastName: lastName,
-         userPhoneNumber: phoneNumber,
-         userGender: gender,
+         email: email.toLowerCase(),
+         password: password.toLowerCase(),
+         firstName: firstName,
+         lastName: lastName,
+         telephone1: phoneNumber.toString(),
+         gender: gender,
       };
+
 
       fetch(`http://${Constants.host}:3000/shoppay/signup`, {
          method: 'POST', 
@@ -242,7 +241,7 @@ function SignupScreen(props) {
                   <View style={styles.submitButtonSection}>
                      <TouchableNativeFeedback 
                         useForeground={false} 
-                        onPress = {confirmLogInHandler}
+                        onPress = {confirmSignupHandler}
                         background = {TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)}
                      >
 
@@ -250,7 +249,8 @@ function SignupScreen(props) {
                            <Text style={styles.submitButton}>Signup for Shoopay</Text>
                         </View>
                      </TouchableNativeFeedback>
-                     <Text style={styles.headerSecondary}>All ready have an account? <Text style={styles.textUnderline}> Sign In</Text></Text>
+                     <Text style={styles.headerSecondary}>All ready have an account? <Text onPress={
+                        ()=>props.navigation.navigate("LoginScreen")} style={styles.textUnderline}> Sign In</Text></Text>
                   </View>
 
                </View>
@@ -294,6 +294,7 @@ const styles = StyleSheet.create({
       alignSelf: "center",
       width: "50%",
       height: 100,
+      marginVertical: 50,
 
    },
    input: {

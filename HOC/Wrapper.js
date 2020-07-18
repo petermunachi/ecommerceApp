@@ -11,7 +11,7 @@ import SignupScreen from '../screens/auth/SignupScreen';
 
 
 function Wrapper(props) {
-  const [isLoggedIn, setIsLoggedIn] = useState('true');
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -21,7 +21,7 @@ function Wrapper(props) {
         if (value !== null) {
             // We have data!!
             // console.log(value);
-            setIsLoggedIn(value);
+            setIsOnline(value);
         }
       } catch (error) {
         // Error retrieving data
@@ -39,7 +39,7 @@ function Wrapper(props) {
     <>
       {
         // isLoggedIn == 'true' ? props.children : 
-        <SignupScreen onLogIn={activateLoginHandler} />
+        <LoginScreen onLogIn={activateLoginHandler} />
       }
     </>
   );

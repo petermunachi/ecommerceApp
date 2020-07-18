@@ -193,159 +193,164 @@ function SellScreen (props) {
    
    
    return (
-      <Wrapper>
-         <View style = {styles.container} >
-            <Text style={styles.headerPrimary}>SELL SCREEN </Text>
+      <View style = {styles.container} >
+         <Text style={styles.headerPrimary}>SELL SCREEN </Text>
+         
+         {isLoading ?
+            <View style={styles.loading}>
+               <ActivityIndicator 
+                  animating={isLoading}
+                  size={70}
+                  color = "rgb(153, 0, 115)"
+               />
+            </View>
+         
+            : null
+         }
+
+         <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
+
+            <View>
+               <Text style={styles.headerSecondary}>Choose A Category </Text>
+               <View style={styles.selectBoxContainer}>
+                  <SelectBox 
+                     status={true}
+                     mode="dropdown" 
+                     selectedValue={selectedValue} 
+                     valueChange={onChangeHandler}
+                  >
+                     {mainCategories}
+                  </SelectBox>
+               </View>
+            </View>
             
-            <ActivityIndicator 
-               animating={isLoading}
-               size="large"
-               color="#00ff00"
-            />
-            <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Choose A Category </Text>
-                  <View style={styles.selectBoxContainer}>
-                     <SelectBox 
-                        status={true}
-                        mode="dropdown" 
-                        selectedValue={selectedValue} 
-                        valueChange={onChangeHandler}
-                     >
-                        {mainCategories}
-                     </SelectBox>
-                  </View>
+            <View>
+               <Text style={styles.headerSecondary}>Sub Categories </Text>
+               <View style={styles.selectBoxContainer}>
+                  <SelectBox 
+                     status={true}
+                     mode="dropdown" 
+                     selectedValue={categoryValue} 
+                     valueChange={subChangeHandler}
+                  >
+                     {subCategories}
+                  </SelectBox>
                </View>
-               
-               <View>
-                  <Text style={styles.headerSecondary}>Sub Categories </Text>
-                  <View style={styles.selectBoxContainer}>
-                     <SelectBox 
-                        status={true}
-                        mode="dropdown" 
-                        selectedValue={categoryValue} 
-                        valueChange={subChangeHandler}
-                     >
-                        {subCategories}
-                     </SelectBox>
-                  </View>
-               </View>
+            </View>
 
-               <View>
-                  <Text style={styles.headerSecondary}>City</Text>
-                     <TouchableWithoutFeedback
-                     
-                        onPress={() => {
-                           props.navigation.push(locationType, {
-                              location: stateName,
-                           })
-                           
-                        }}
-                     >
-                        <View style={styles.selectBoxContainer}>
-                           
-                           <Picker
-                              enabled={false}
-                              style={styles.selectBox}
-                           >
-                              <Picker.Item label={city} value={city} />
-                           </Picker>
-
-                        </View>
-                     </TouchableWithoutFeedback>
-               </View>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Name / Title</Text>
-                  <View style={styles.inputContainer}>
-                     <Input autoCapitalize='words' />
-                  </View>
-               </View>
-
-               <View>
-                  <Text style={styles.headerSecondary}>Condition</Text>
+            <View>
+               <Text style={styles.headerSecondary}>City</Text>
+                  <TouchableWithoutFeedback
                   
-                  <View style={styles.selectBoxContainer}>
-                     
-                     <Picker
-                        enabled={false}
-                        style={styles.selectBox}
-                        onValueChange={(itemValue, itemIndex) => setCondition(itemValue)}
-                     >
-                        <Picker.Item label="New" value="New" />
-                        <Picker.Item label="Used" value="Used" />
-                        <Picker.Item label="Refurbished" value="Refurbished" />
+                     onPress={() => {
+                        props.navigation.push(locationType, {
+                           location: stateName,
+                        })
+                        
+                     }}
+                  >
+                     <View style={styles.selectBoxContainer}>
+                        
+                        <Picker
+                           enabled={false}
+                           style={styles.selectBox}
+                        >
+                           <Picker.Item label={city} value={city} />
+                        </Picker>
 
-                     </Picker>
-
-                  </View>
+                     </View>
+                  </TouchableWithoutFeedback>
                </View>
 
-               <View>   
-                  <Text style={styles.headerSecondary}>Price</Text>
-                  <View style={styles.inputContainer}>
-                     <Input keyboardType="number-pad" />
-                  </View>
+            <View>
+               <Text style={styles.headerSecondary}>Name / Title</Text>
+               <View style={styles.inputContainer}>
+                  <Input autoCapitalize='words' />
                </View>
+            </View>
 
-               <View>
-                  <Text style={styles.headerSecondary}>Description</Text>
-                  <View style={styles.inputContainer}>
-                     <Input style={styles.input} />
-                  </View>
+            <View>
+               <Text style={styles.headerSecondary}>Condition</Text>
+               
+               <View style={styles.selectBoxContainer}>
+                  
+                  <Picker
+                     enabled={false}
+                     style={styles.selectBox}
+                     onValueChange={(itemValue, itemIndex) => setCondition(itemValue)}
+                  >
+                     <Picker.Item label="New" value="New" />
+                     <Picker.Item label="Used" value="Used" />
+                     <Picker.Item label="Refurbished" value="Refurbished" />
+
+                  </Picker>
+
                </View>
+            </View>
 
-               <View>   
-                  <Text style={styles.headerSecondary}>Negotiation</Text> 
-                  <View style={styles.switchContainer}>
-                     <Switch
-                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                        thumbColor={isEnabled ? "#ff6347" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
-                     />
-                  </View>
+            <View>   
+               <Text style={styles.headerSecondary}>Price</Text>
+               <View style={styles.inputContainer}>
+                  <Input keyboardType="number-pad" />
                </View>
+            </View>
 
-               <View>
-                  <View style={styles.buttonContainer}>
-
-                     <Button title="Add Photo" color="#00cc00" onPress={pickImage} />
-                  </View>
-                  <View style={styles.photoContainer}>
-                     {
-                        images.map((image, index) =>(
-                           <View key={index} style={styles.categoryContainer}>
-                           {
-                              image && 
-                              <Image 
-                                 source={{ uri: image }} 
-                                 style={{resizeMode: "cover", width: 90, height: 90, borderRadius: 5, }} 
-                                 
-                              />
-                           }
-                           </View>
-                        ))
-                     }
-                  </View>
+            <View>
+               <Text style={styles.headerSecondary}>Description</Text>
+               <View style={styles.inputContainer}>
+                  <Input style={styles.input} />
                </View>
+            </View>
 
-               <View>
-                  <Text style={styles.headerSecondary}>Seller Name: {`${userDetail.firstName} ${userDetail.lastName} `}</Text> 
-                  <Text style={styles.headerSecondary}>Seller Phone Number: {userDetail.phoneNumber} </Text> 
+            <View>   
+               <Text style={styles.headerSecondary}>Negotiation</Text> 
+               <View style={styles.switchContainer}>
+                  <Switch
+                     trackColor={{ false: "#767577", true: "#81b0ff" }}
+                     thumbColor={isEnabled ? "#ff6347" : "#f4f3f4"}
+                     ios_backgroundColor="#3e3e3e"
+                     onValueChange={toggleSwitch}
+                     value={isEnabled}
+                  />
                </View>
+            </View>
 
-               <View style={styles.submitButtonContainer}>
-                  <Button title="Post Product" color="#ff6347" onPress={pickImage} />
+            <View>
+               <View style={styles.buttonContainer}>
+
+                  <Button title="Add Photo" color="#00cc00" onPress={pickImage} />
                </View>
+               <View style={styles.photoContainer}>
+                  {
+                     images.map((image, index) =>(
+                        <View key={index} style={styles.categoryContainer}>
+                        {
+                           image && 
+                           <Image 
+                              source={{ uri: image }} 
+                              style={{resizeMode: "cover", width: 90, height: 90, borderRadius: 5, }} 
+                              
+                           />
+                        }
+                        </View>
+                     ))
+                  }
+               </View>
+            </View>
+
+            <View>
+               <Text style={styles.headerSecondary}>Seller Name: {`${userDetail.firstName} ${userDetail.lastName} `}</Text> 
+               <Text style={styles.headerSecondary}>Seller Phone Number: {userDetail.phoneNumber} </Text> 
+            </View>
+
+            <View style={styles.submitButtonContainer}>
+               <Button title="Post Product" color="#ff6347" onPress={pickImage} />
+            </View>
 
 
-            </ScrollView>
+         </ScrollView>
             
-         </View>
-      </Wrapper>
+      </View>
             
    )
 
@@ -362,9 +367,16 @@ const styles = StyleSheet.create({
       marginTop: 20,
       marginBottom: 10
    },
-   lottie: {
-      width: 100,
-      height: 100,
+   loading: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: "rgba(191, 189, 189, 0.50)",
+      zIndex: 100,
    },
    container: {
       flex: 1, 
