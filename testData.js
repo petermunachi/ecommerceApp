@@ -279,7 +279,7 @@ export const products = [
 ]
 export const product = {
     id: 1,
-    model:'Samsung Galaxy 32 GB',
+    title:'Samsung Galaxy 32 GB',
     color: 'black',
     price: '30',
     condition: 'used',

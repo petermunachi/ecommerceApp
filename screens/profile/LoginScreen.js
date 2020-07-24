@@ -1,5 +1,4 @@
 import React, {useState, useEffect } from 'react';
-
 import PropTypes from 'prop-types';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -22,23 +21,23 @@ import Input from '../../components/Input';
 import ImageDisplay from '../../components/ImageDisplay';
 import Constants from '../../Constants/constants';
 
-import {AuthContext} from '../../utils'
-
 
 
 
 
 function LoginScreen(props) {
 
-
-     const { signIn } = React.useContext(AuthContext);
   
    // STATES
 
    const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [login, setLogin] = useState(false);
 
+   useEffect(() => {
+      
+   }, [login])
 
    const confirmLogInHandler = () => {
 
@@ -61,6 +60,7 @@ function LoginScreen(props) {
       .then(data => {
          setIsLoading(false)
 
+         // console.log(data);
 
          if (data.status == 1) { 
 
@@ -68,11 +68,13 @@ function LoginScreen(props) {
                '',
                'You have been logged in',
                [{ text: 'Ok', onPress: ()=> {
+                  data.msg[0].login = true;
                   
                   console.log(data.msg);
                   AsyncStorage.setItem('loggedIn', JSON.stringify(data.msg));
                   console.log('You have been logged in');
-                  signIn(data.msg)
+                  setLogin(true)
+                  props.navigation.navigate('Home', { screen: 'HomeScreen' });
 
                } }]
             )

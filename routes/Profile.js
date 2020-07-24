@@ -3,7 +3,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 import Header from '../components/layout/Header';
+import Constants from '../Constants/constants';
 
 //SCREENS
 import ProfileScreen from '../screens/profile/ProfileScreen';
@@ -19,7 +22,24 @@ function Profile() {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{ 
-          headerTitle: props => <Header {...props} />,
+          headerShown: false
+        //   headerTitle: props => <Header {...props} title='Profile' />,
+        //  // headerTransparent: true,
+        //   headerStatusBarHeight: Constants.statusBarHeight,
+        //   headerBackground: () => (
+        //     <LinearGradient
+        //       colors = {
+        //         [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+        //       }
+        //       locations = {[0, 0.8]}
+        //       start={[0, 0]}
+        //       end={[0, 0.2]}
+        //       style={{
+        //         flex: 1,
+        //         // justifyContent: 'center',
+        //       }}
+        //     />
+        //   ),
          
         }}
       />

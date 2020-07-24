@@ -15,6 +15,8 @@ import {
 import { productSubCategories } from '../../testData';
 
 import CategoryList from '../../components/CategoryList';
+import Header from '../../components/layout/Header';
+
 
 
 
@@ -61,6 +63,8 @@ function SubCategoryScreen(props) {
   const { categoryName} = props.route.params;
 
   return (
+    <>
+    <Header title={"Sub-category"} />
     <View style={styles.screen}>
       <ActivityIndicator 
         animating={isLoading}
@@ -98,6 +102,7 @@ function SubCategoryScreen(props) {
 
       </ScrollView>
     </View>
+    </>
   );
   
 }

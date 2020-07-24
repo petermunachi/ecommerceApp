@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
 import CategoryList from '../../components/CategoryList';
+import SearchHeader from '../../components/layout/SearchHeader';
+
 
 
 function StateScreen(props) {
@@ -32,7 +34,7 @@ function StateScreen(props) {
                .then((value) => {
                   setIsLoading(false);
                   if (value !== null) {
-                     // console.log(value);
+                     console.log(value);
                      setList(JSON.parse(value))
                   }
 
@@ -55,6 +57,8 @@ function StateScreen(props) {
          
 
    return ( 
+      <>
+      <SearchHeader title="State" page="SellScreen" navigation={props.navigation} />
       <View>
          <View style={styles.loaderContainer}>
             <ActivityIndicator 
@@ -92,6 +96,7 @@ function StateScreen(props) {
     
          </ScrollView>
       </View>
+      </>
       
    );
    

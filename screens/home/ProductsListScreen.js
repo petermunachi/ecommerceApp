@@ -14,6 +14,8 @@ import {
 import { products } from '../../testData';
 
 import ProductList from '../../components/ProductList';
+import Header from '../../components/layout/Header';
+
 
 
 
@@ -77,6 +79,8 @@ function ProductsListScreen(props) {
 
 
   return (
+    <>
+    <Header title={"Product Lists"} />
     <View style={styles.screen}>
 
       <ActivityIndicator 
@@ -95,6 +99,7 @@ function ProductsListScreen(props) {
 
       </ScrollView>
     </View>
+    </>
   );
 
 

@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import ImageDisplay from '../ImageDisplay';
-import Constants from '../../Constants/constants';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableNativeFeedback
+} from 'react-native';
+import Input from '../Input';
+import CustomConstants from '../../Constants/constants';
 import * as Font from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
 import { AppLoading } from "expo";
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 
-function Header(props) {
+
+
+function SearchHeader(props) {
 
   // const [ dataLoaded, setDataLoaded ] = useState(false)
 
@@ -40,15 +48,13 @@ function Header(props) {
   //     />
   //   );
   // }
-  let titleProps = props.title;
 
-  const title = (titleProps.length > 15) ? titleProps.substr(0, 15) + '...' : titleProps;
 
 
   return (
     <LinearGradient
       colors = {
-        [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+        [CustomConstants.headerPrimaryGradient, CustomConstants.headerSecondaryGradient]
       }
       locations = {[0, 0.8]}
       start={[0, 0]}
@@ -56,20 +62,32 @@ function Header(props) {
       style={{
         // flex: 1,
         // justifyContent: 'center',
-        height: "15%"
+        alignItems: "center",
+        height: "14%"
       }}
     >
   
       <View style={styles.container}>
 
+         <TouchableNativeFeedback 
+            // activeOpacity={0.8} 
+            onPress={
+                () => props.navigation.navigate(props.page)
+            }
+            background = {
+                TouchableNativeFeedback.Ripple(CustomConstants.ripple, false, 0)
+            }
+        >
+
         <View style={styles.logoContainer}>
-          <ImageDisplay
-            style={styles.tinyLogo}
-            source={require('../../assets/splash.png')}
-          />
+            <Ionicons name="ios-arrow-dropleft"  size={40} color="#fff" />
         </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{title}</Text>
+
+        </TouchableNativeFeedback>
+        <View style={styles.inputContainer}>
+            <Input style={styles.input}
+                placeholder={`Search ${props.title}...`}
+            />
         </View>
 
       </View> 
@@ -81,16 +99,28 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: 'center',
+    paddingTop: 20,
   },
 
   logoContainer: {
     width: "20%",
-    height: 100,
+    // height: 100,
     // marginLeft: 15,
 
   },
-  titleContainer: {
+  input:{
+    paddingLeft: 10,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: CustomConstants.darkGray,
+    
+    overflow: "hidden"
+  },
+  inputContainer: {
     width: '60%',
+    backgroundColor: "white",
+    height: 35,
+    borderRadius: 8,
   },
   title: {
     textAlign: "center",
@@ -102,4 +132,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Header;
+export default SearchHeader;

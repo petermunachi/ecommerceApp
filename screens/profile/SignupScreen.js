@@ -1,5 +1,4 @@
 import React, {useState, useEffect } from 'react';
-
 import PropTypes from 'prop-types';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -7,11 +6,13 @@ import {
    View,
    Text,
    AsyncStorage,
+   Picker,
    Alert,
    StyleSheet,
    TouchableNativeFeedback,
    ScrollView,
    ActivityIndicator,
+   StatusBar,
    SafeAreaView,
    Keyboard,
    
@@ -19,38 +20,43 @@ import {
 
 
 import Input from '../../components/Input';
+import SelectBox from '../../components/SelectBox';
+import { userDetail } from '../../testData';
 import ImageDisplay from '../../components/ImageDisplay';
 import Constants from '../../Constants/constants';
-
-import {AuthContext} from '../../utils'
-
+import Wrapper from '../../HOC/Wrapper';
 
 
 
 
-function LoginScreen(props) {
 
+function SignupScreen(props) {
 
-     const { signIn } = React.useContext(AuthContext);
   
    // STATES
-
    const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-
-
-   const confirmLogInHandler = () => {
+   const [phoneNumber, setPhoneNumber] = useState('');
+   const [firstName, setFirstName] = useState('');
+   const [lastName, setLastName] = useState('');
+   const [gender, setGender] = useState('male');
+   
+   
+   const confirmSignupHandler = () => {
 
       setIsLoading(true);
       const data = {
          email: email.toLowerCase(),
          password: password.toLowerCase(),
-        
+         firstName: firstName,
+         lastName: lastName,
+         telephone1: phoneNumber.toString(),
+         gender: gender,
       };
 
 
-      fetch(`http://${Constants.host}:3000/shoppay/login`, {
+      fetch(`http://${Constants.host}:3000/shoppay/signup`, {
          method: 'POST', 
          headers: {
             'Content-Type': 'application/json',
@@ -61,22 +67,14 @@ function LoginScreen(props) {
       .then(data => {
          setIsLoading(false)
 
-
+         console.log(data);
          if (data.status == 1) { 
-
             Alert.alert(
-               '',
-               'You have been logged in',
-               [{ text: 'Ok', onPress: ()=> {
-                  
-                  console.log(data.msg);
-                  AsyncStorage.setItem('loggedIn', JSON.stringify(data.msg));
-                  console.log('You have been logged in');
-                  signIn(data.msg)
-
-               } }]
-            )
-         }else if (data.status == 0) {
+            '',
+            'You Have Successfully Signup',
+            [{ text: 'Ok', onPress: ()=> console.log('You Have Successfully Signup') }]
+         )
+         } else if (data.status == 0) {
             alertHandler(data.msg)
          }
 
@@ -87,7 +85,6 @@ function LoginScreen(props) {
       });
 
       Keyboard.dismiss();
-
    }
   
    const alertHandler = (field) => {
@@ -102,12 +99,17 @@ function LoginScreen(props) {
    const onChangeTextHandler = (inputText, state) => {
       if(state === 'email') setEmail(inputText);
       if(state === 'password') setPassword(inputText);
-      
+      if(state === 'phoneNumber') setPhoneNumber(inputText);
+      if(state === 'firstName') setFirstName(inputText);
+      if(state === 'lastName') setLastName(inputText);
+      if(state === 'gender') setGender(inputText);
    }
-   
+
+
+
+
    
    return (
-
       <SafeAreaView style={styles.container}>
          <LinearGradient
             colors = {
@@ -127,7 +129,6 @@ function LoginScreen(props) {
                   />
                </View>
 
-            
                {isLoading ?
                   <View style={styles.loading}>
                      <ActivityIndicator 
@@ -139,14 +140,41 @@ function LoginScreen(props) {
                
                  : null
                }
-
-              
+            
 
                <View style={styles.inputSection}>
                   <View style={styles.headerContainer}>
-                     <Text style={styles.headerPrimary}>Login </Text>
-                     <Text style={styles.headerSecondary}>Login to your Shoppay account</Text>
+                     <Text style={styles.headerPrimary}>Signup </Text>
+                     <Text style={styles.headerSecondary}>Signup for Shoppay account</Text>
 
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input
+                           placeholder="First Name"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           autoCapitalize='words' 
+                           onChangeText={text => onChangeTextHandler(text, 'firstName')}
+                           blurOnSubmit={true}
+                           value={firstName}
+                        />
+                     </View>
+                  </View>
+
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input
+                           placeholder="Last Name"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           autoCapitalize='words' 
+                           onChangeText={text => onChangeTextHandler(text, 'lastName')}
+                           blurOnSubmit={true}
+                           value={lastName}
+                        />
+                     </View>
                   </View>
 
                   <View>
@@ -155,8 +183,8 @@ function LoginScreen(props) {
                            placeholder="Email Address"
                            placeholderTextColor="#cccccc"
                            style={styles.input} 
-                           textContentType="emailAddress"
                            keyboardType="email-address" 
+                           textContentType="emailAddress"
                            onChangeText={text => onChangeTextHandler(text, 'email')}
                            blurOnSubmit={true}
                            value={email}
@@ -164,7 +192,19 @@ function LoginScreen(props) {
                      </View>
                   </View>
 
-                 
+                  <View>
+                     <View style={styles.inputContainer}>
+                        <Input 
+                           placeholder="Phone Number"
+                           placeholderTextColor="#cccccc"
+                           style={styles.input} 
+                           keyboardType="phone-pad"
+                           onChangeText={text => onChangeTextHandler(text, 'phoneNumber')}
+                           blurOnSubmit={true}
+                           value={phoneNumber}  
+                        />
+                     </View>
+                  </View>
                   
                   <View>   
                      <View style={styles.inputContainer}>
@@ -181,26 +221,36 @@ function LoginScreen(props) {
                      </View>
                   </View>
 
+                  <View>
+                     <View style={styles.selectBoxContainer}>
+                        
+                        <Picker
+                           selectedValue={gender}
+                           enabled={true}
+                           style={styles.selectBox}
+                           onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                        >
+                           <Picker.Item label="Male" value="male" />
+                           <Picker.Item label="Female" value="female" />
+                        </Picker>
+                     </View>
+                  </View>
+
                  
 
                   <View style={styles.submitButtonSection}>
                      <TouchableNativeFeedback 
                         useForeground={false} 
-                        onPress = {confirmLogInHandler}
-                        background = {
-                           TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
-                        }
+                        onPress = {confirmSignupHandler}
+                        background = {TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)}
                      >
 
                         <View style={styles.submitButtonContainer}>
-                           <Text style={styles.submitButton}>Login to Shoopay</Text>
+                           <Text style={styles.submitButton}>Signup for Shoopay</Text>
                         </View>
                      </TouchableNativeFeedback>
-                     <Text style={styles.headerSecondary}>
-                        Don't have an account? 
-                        <Text onPress={()=>props.navigation.navigate("SignupScreen")} style={styles.textUnderline}> Register Now</Text>
-                     </Text>
-                  
+                     <Text style={styles.headerSecondary}>All ready have an account? <Text onPress={
+                        ()=>props.navigation.navigate("LoginScreen")} style={styles.textUnderline}> Sign In</Text></Text>
                   </View>
 
                </View>
@@ -212,14 +262,11 @@ function LoginScreen(props) {
                   
 
       </SafeAreaView>
-
-      
-        
    )
 
 }
 
-LoginScreen.propTypes = {
+SignupScreen.propTypes = {
    onLogIn: PropTypes.func,
 };
 
@@ -229,19 +276,6 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       
-   },
-
-   imageContainer: {
-      alignSelf: "center",
-      width: "50%",
-      height: 100,
-      marginTop: 50,
-
-   },
-   input: {
-      paddingLeft: 10,
-      fontSize: 14,
-      fontWeight: "bold",
    },
 
    loading: {
@@ -254,6 +288,21 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       backgroundColor: "rgba(191, 189, 189, 0.50)",
       zIndex: 100,
+   },
+
+   imageContainer: {
+      alignSelf: "center",
+      width: "50%",
+      height: 100,
+      marginVertical: 50,
+
+   },
+   input: {
+      paddingLeft: 10,
+      fontSize: 14,
+      fontWeight: "bold",
+      color: Constants.darkGray,
+
    },
 
    textUnderline: {
@@ -270,6 +319,27 @@ const styles = StyleSheet.create({
       marginVertical: 5,
       alignItems: 'center',
       borderColor: Constants.placeholderColor,
+      borderWidth: 1,
+      borderRadius: 5,
+      backgroundColor: "white",
+      height: 45,
+      width: "100%"
+   },
+
+   selectBox: {
+      height: "100%",
+      width: '100%',
+      fontSize: 14,
+      fontWeight: "bold",
+      color: Constants.darkGray,
+
+   },
+   selectBoxContainer: {
+      flexDirection: 'row',
+      marginVertical: 12,
+      alignItems: 'center',
+      borderColor: Constants.placeholderColor,
+      justifyContent: "center",
       borderWidth: 1,
       borderRadius: 5,
       backgroundColor: "white",
@@ -328,6 +398,6 @@ const styles = StyleSheet.create({
 });
 
 
-export default LoginScreen;
+export default SignupScreen;
 
 

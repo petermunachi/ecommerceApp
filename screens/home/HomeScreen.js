@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+import {AuthContext} from '../../utils'
+
 
 import {
   View,
@@ -25,6 +27,8 @@ import CategoryList from '../../components/CategoryList';
 import ProductList from '../../components/ProductList';
 import ProductCard from '../../components/ProductCard';
 import Constants from '../../Constants/constants';
+import Header from '../../components/layout/Header';
+
 import { ScrollView } from 'react-native-gesture-handler';
 
 
@@ -92,118 +96,120 @@ if (showCategories) {
 }
   
 
-    const list = trendingProducts.map((data) =>(
-      <TouchableWithoutFeedback
-        key={data.id}
-        onPress={() => {
-          props.navigation.navigate('ProductScreen', {
-            productId: data.id,
-            productName: data.model || data.title,
-          });
-        }}
-      >
-        <View style={styles.categoryContainer}>
-          <ProductList
-            name={data.model || data.title}
-            price={data.price}
-            location={data.region}
-            photo={data.photo[0]}
-            phoneNumber={data.sellerPhoneNumber}
+  const list = trendingProducts.map((data) =>(
+    <TouchableWithoutFeedback
+      key={data.id}
+      onPress={() => {
+        props.navigation.navigate('ProductScreen', {
+          productId: data.id,
+          productName: data.model || data.title,
+        });
+      }}
+    >
+      <View style={styles.categoryContainer}>
+        <ProductList
+          name={data.model || data.title}
+          price={data.price}
+          location={data.region}
+          photo={data.photo[0]}
+          phoneNumber={data.sellerPhoneNumber}
+          navigation={props.navigation}
+        />
+      </View>
+    </TouchableWithoutFeedback>
+  ))
+
+  return (
+    <>
+    <Header title={"Home"} />
+    <SafeAreaView  style={styles.screen}>
+      <StatusBar barStyle="dark-content" 
+        backgroundColor={Constants.statusBarColor} 
+      />
+
+      
+      <View>
+        <View style={styles.topContainer}>
+          <View>
+            <Text style={styles.headerSecondary}>Categories (224) </Text>
+          </View>
+
+          <View style={styles.buttonContainer}>
+
+            <View style={styles.button}>
+              <Button color="rgb(255, 128, 128)" title="All" />
+            </View>
+
+            <View style={styles.button}>
+              <Button color="lightgray" title="Fashion" />
+            </View>
+
+
+            <TouchableNativeFeedback 
+              useForeground={false} 
+              onPress = {
+                () => {
+                  setShowCategories(prevState=> !prevState);
+                  if (showCategoriesText == "See All")
+                    setShowCategoriesText("Show Less");
+                  else
+                    setShowCategoriesText("See All");
+                }
+              }
+              background = {
+                  TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
+              }
+            >
+
+              <View style={styles.more}>
+                <Text style={styles.textUnderline}>{showCategoriesText}</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+
+
+          
+        </View>
+          
+
+      </View>
+
+        
+
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <View style={styles.mainCategoriesSection}>
+              {categoriesList}
+            </View>
+            <View>
+              <Text style={styles.headerPrimary}>Trending</Text>
+            </View>
+          </>
+        }
+        ListEmptyComponent={
+          <>
+            <Text>Loading products</Text>
+          </>
+        }
+        keyExtractor={(item, index) => index}
+        data={trendingProducts}
+        renderItem={ itemData =>  <ProductCard 
+            productTitle={itemData.item.title}
+            productDescription={itemData.item.description}
+            productPrice={itemData.item.price}
+            productLocation={itemData.item.region}
             navigation={props.navigation}
           />
-        </View>
-      </TouchableWithoutFeedback>
-    ))
+        }
+      />
 
-    return (
-      <>
+        
+    </SafeAreaView>
+    </>
+  );
 
-      <SafeAreaView  style={styles.screen}>
-        <StatusBar barStyle="dark-content" 
-          backgroundColor={Constants.statusBarColor} 
-        />
-
-       
-        <View>
-          <View style={styles.topContainer}>
-            <View>
-              <Text style={styles.headerSecondary}>Categories (224) </Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-
-              <View style={styles.button}>
-                <Button color="rgb(255, 128, 128)" title="All" />
-              </View>
-
-              <View style={styles.button}>
-                <Button color="lightgray" title="Fashion" />
-              </View>
-
-
-              <TouchableNativeFeedback 
-                useForeground={false} 
-                onPress = {
-                  () => {
-                    setShowCategories(prevState=> !prevState);
-                    if (showCategoriesText == "See All")
-                      setShowCategoriesText("Show Less");
-                    else
-                      setShowCategoriesText("See All");
-                  }
-                }
-                background = {
-                    TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
-                }
-              >
-
-                <View style={styles.more}>
-                  <Text style={styles.textUnderline}>{showCategoriesText}</Text>
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-
-
-            
-          </View>
-           
-
-        </View>
-
-          
-
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <View style={styles.mainCategoriesSection}>
-                {categoriesList}
-              </View>
-              <View>
-                <Text style={styles.headerPrimary}>Trending</Text>
-              </View>
-            </>
-          }
-          ListEmptyComponent={
-            <>
-              <Text>No Category Found</Text>
-            </>
-          }
-          keyExtractor={(item, index) => index}
-          data={trendingProducts}
-          renderItem={ itemData =>  <ProductCard 
-              productTitle={itemData.item.title}
-              productDescription={itemData.item.description}
-              productPrice={itemData.item.price}
-              productLocation={itemData.item.region}
-              navigation={props.navigation}
-            />
-          }
-        />
-
-          
-      </SafeAreaView>
-      </>
-    );
+         
 }
 
 const styles = StyleSheet.create({

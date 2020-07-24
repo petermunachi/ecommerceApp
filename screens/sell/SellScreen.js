@@ -13,9 +13,12 @@ import {
    Switch,
    Button,
    Image,
+   Platform,
    Alert,
+   Keyboard,
    ActivityIndicator,
    Dimensions,
+
 } from 'react-native';
 
 
@@ -27,8 +30,13 @@ import * as FileSystem from 'expo-file-system';
 import SelectBox from '../../components/SelectBox';
 import Input from '../../components/Input';
 import Wrapper from '../../HOC/Wrapper';
-import { productMainCategories, productSubCategories, userDetail } from '../../testData';
+// import { productMainCategories,  } from '../../testData';
 import { useFocusEffect } from '@react-navigation/native';
+
+import CustomConstants from '../../Constants/constants';
+import Header from '../../components/layout/Header';
+
+
 
 
 
@@ -38,31 +46,36 @@ function SellScreen (props) {
    // STATES
    const [mainCategories, setMainCategories] = useState([]);
    const [subCategories, setSubCategories] = useState([]);
-   const [selectedValue, setSelectedValue] = useState(null);
-   const [categoryName, setCategoryName] = useState('');
-   const [categoryValue, setCategoryValue] = useState('');
+   const [mainCategoryValue, setMainCategoryValue] = useState(null);
+   const [subCategoryValue, setSubCategoryValue] = useState('');
    const [city, setCity] = useState('');
    const [locationType, setLocationType] = useState('StateScreen');
    const [stateName, setStateName] = useState('');
-   const [condition, setCondition] = useState('');
+   const [condition, setCondition] = useState('New');
    const [isLoading, setIsLoading] = useState(false);
-   const [isEnabled, setIsEnabled] = useState(false);
+   const [negotiation, setNegotiation] = useState(false);
    const [images, setImages] = useState([]);
-   const [userDetails, setUserDetails] = useState();
+   const [userDetails, setUserDetails] = useState({});
+
+   const [title, setTitle] = useState('');
+   const [price, setPrice] = useState('');
+   const [description, setDescription] = useState('');
+
    
    const w = Dimensions.get('window');
 
    useEffect(() => {
       setIsLoading(true);
-      fetch('/api/productCategories')
+      
+      fetch(`http://${CustomConstants.host}:3000/shoppay/get_mainCategory`)
          .then(response => response.json())
          .then(function (data) {
             setIsLoading(false);
+            // console.log(data);
             AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
          })
          .catch((error) => {
             setIsLoading(false);
-            AsyncStorage.setItem('productmaincategories', JSON.stringify(productMainCategories));
          });
 
       AsyncStorage.getItem('productmaincategories')
@@ -70,6 +83,8 @@ function SellScreen (props) {
          .catch((error) => {
             console.log('Error:', error);
          });
+
+      
        
       retrieveData();
       getPermissionAsync();
@@ -91,37 +106,45 @@ function SellScreen (props) {
          .catch((error) => {
             console.log('Error:', error);
          });
-      AsyncStorage.getItem('userData')
+
+      AsyncStorage.getItem('loggedIn')
          .then((value) => {
-            let data = JSON.parse(value);
+            let data = JSON.parse(value)[0];
+            // console.log(data.firstName);
             setUserDetails(data);
+            // console.log(userDetails);
 
          })
          .catch((error) => {
             console.log('Error:', error);
          });
+      
    }
 
 
-   const fetchSubCategories = () => {
-      let itemKey = `${categoryName}subcategories`.replace(/\s/g, "");
+   const fetchSubCategories = (itemValue) => {
+      // let itemKey = `${categoryName}subcategories`.replace(/\s/g, "");
+      // console.log(mainCategoryValue);
 
-      fetch(`/api/subCategories/:${selectedValue}`)
+      fetch(`http://${CustomConstants.host}:3000/shoppay/get_subcategory/${itemValue}`)
          .then(response => response.json())
          .then(function (data) {
-            setCategoryName(data.subCategoryName)
+            // setCategoryName(data.name)
+            console.log(data);
+            console.log(itemValue);
+            setSubCategories(data)
 
-            AsyncStorage.setItem(itemKey, JSON.stringify(productSubCategories));
+            // AsyncStorage.setItem(itemKey, JSON.stringify(data));
 
          })
          .catch((error) => {
-            // console.log('Error:', error);
-            AsyncStorage.setItem(itemKey, JSON.stringify(productSubCategories));
+            console.log('Error:', error);
+            // AsyncStorage.setItem(itemKey, JSON.stringify(productSubCategories));
 
          });
 
-      AsyncStorage.getItem(itemKey)
-         .then((value) => setSubCategories(JSON.parse(value)))
+      // AsyncStorage.getItem(itemKey)
+      //    .then((value) => setSubCategories(JSON.parse(value)))
 
    }
 
@@ -140,16 +163,17 @@ function SellScreen (props) {
          let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
+            base64: true,
             aspect: [4, 3],
             quality: 1,
             allowsMultipleSelection: true,
             exif: true,
          });
-         if (!result.cancelled) {
-           checkImageSize(result.uri)
+         if (result.uri) {
+           checkImageSize(result)
          }
 
-         // console.log(result);
+         console.log(result);
       } catch (E) {
          console.log(E);
       }
@@ -158,31 +182,33 @@ function SellScreen (props) {
      
 
    const onChangeHandler = (itemValue, itemIndex) => {
-      setSelectedValue(itemValue);
-      fetchSubCategories();
+      console.log(itemValue);
+      setMainCategoryValue(itemValue);
+      fetchSubCategories(itemValue);
    }
 
-   const subChangeHandler = (itemValue, itemIndex) => setCategoryValue(itemValue)
+   const subChangeHandler = (itemValue, itemIndex) => setSubCategoryValue(itemValue)
 
-   const toggleSwitch = () => setIsEnabled(previousState => !previousState)
+   const toggleSwitch = () => setNegotiation(previousState => !previousState)
 
    const checkImageSize = (imageUrl) => {
      
-      FileSystem.getInfoAsync(imageUrl, {
+      FileSystem.getInfoAsync(imageUrl.uri, {
          size: true
       })
          .then((value)=> {
             // 1000000 byte approximately 1mb
 
             if (value.size > 5000000) {
-               Alert.alert('Upload Error', 'Image Size Exceeds 5MB ...', [{
+               Alert.alert('Upload Error', 'Image size exceeds 5MB ...', [{
                   text: 'Close',
                   style: 'cancel',
    
                }]);
                
             }else{
-               setImages(prevImages => [...prevImages, imageUrl])
+               setImages(prevImages => [...prevImages, imageUrl]);
+               console.log(images);
             }
 
          })
@@ -190,33 +216,150 @@ function SellScreen (props) {
 
    }
 
-   
-   
+   const onChangeTextHandler = (inputText, state) => {
+      if(state === 'title') setTitle(inputText);
+      if(state === 'price') setPrice(inputText);
+      if(state === 'description') setDescription(inputText);
+     
+   }
+
+   const deleteImageHandler = (imageKey) => {
+      setImages(currentImage => {
+         return currentImage.filter((image) => image.uri != imageKey);
+      });
+
+   }
+
+   const addProductHandler = () => {
+      
+      setIsLoading(true);
+      const data = {
+         sellerId: userDetails._id,
+         title: title,
+         location: city,
+         description: description,
+         condition: condition,
+         categories: mainCategoryValue,
+         pcategories: subCategoryValue,
+         price: price,
+         picture: images,
+         negotiation: negotiation
+      };
+
+      let formData = new FormData();
+
+      formData.append('sellerId', userDetails._id);
+      formData.append('title', title);
+      formData.append('location', city);
+      formData.append('description', description);
+      formData.append('condition', condition);
+      formData.append('categories', mainCategoryValue);
+      formData.append('pcategories', subCategoryValue);
+      formData.append('price', price);
+      formData.append('negotiation', negotiation);
+
+      // for (let i = 0; i < images.length; i++) {
+      //    formData.append('picture', {
+      //       uri: images[i].uri,
+      //       type: 'image/jpeg',
+      //       name: 'profile-picture'
+      //    });
+      // }
+
+      // console.log(images);
+      // const newImageUri = images[0].uri;
+      
+      // console.log(JSON.stringify(images[0].uri));
+      // console.log(formData);
+
+      fetch(`http://${CustomConstants.host}:3000/shoppay/add_product`, {
+         method: 'POST', 
+         headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            picture: btoa(images[0].uri)
+         }),
+
+    })
+      .then(response => response.json())
+      .then(data => {
+         setIsLoading(false)
+
+         // console.log(data);
+         if (data.status == 1) { 
+            Alert.alert(
+            '',
+            'You have successfully posted your product',
+            [{
+               text: 'Ok',
+               onPress: () => console.log('You have successfully posted your product')
+            }]
+         )
+         } else if (data.status == 0) {
+            alertHandler(data.msg)
+         }
+
+      })
+      .catch((error) => {
+         setIsLoading(false)
+         console.error('Error:', error);
+      });
+
+      Keyboard.dismiss();
+   }
+  
+   const alertHandler = (field) => {
+      Alert.alert(
+         '',
+         field,
+         [{text: 'Ok', style: 'cancel' }]
+      )
+
+   }
+
    return (
+      <>
+      <Header title={"Sell"} />
       <View style = {styles.container} >
-         <Text style={styles.headerPrimary}>SELL SCREEN </Text>
          
-         {isLoading ?
-            <View style={styles.loading}>
-               <ActivityIndicator 
-                  animating={isLoading}
-                  size={70}
-                  color = "rgb(153, 0, 115)"
-               />
-            </View>
-         
+         {
+            isLoading ?
+               <View style={styles.loading}>
+                  <ActivityIndicator 
+                     animating={isLoading}
+                     size={70}
+                     color = "rgb(153, 0, 115)"
+                  />
+               </View>
+            
             : null
          }
 
          <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
-            <View>
-               <Text style={styles.headerSecondary}>Choose A Category </Text>
+            <View style={styles.holder}>
+               <Text style={styles.headerSecondary}>Descriptive Name/Title of Product</Text>
+               <View style={styles.inputContainer}>
+                  <Input 
+                     autoCapitalize='words' 
+                     placeholder="Name of Product"
+                     placeholderTextColor="#cccccc"
+                     style={styles.input} 
+                     onChangeText={text => onChangeTextHandler(text, 'title')}
+                     blurOnSubmit={true}
+                     value={title} 
+                  />
+               </View>
+            </View>
+
+            <View style={styles.holder}>
+               <Text style={styles.headerSecondary}>Choose a category </Text>
                <View style={styles.selectBoxContainer}>
                   <SelectBox 
                      status={true}
-                     mode="dropdown" 
-                     selectedValue={selectedValue} 
+                     selectedValue={mainCategoryValue} 
                      valueChange={onChangeHandler}
                   >
                      {mainCategories}
@@ -224,13 +367,12 @@ function SellScreen (props) {
                </View>
             </View>
             
-            <View>
-               <Text style={styles.headerSecondary}>Sub Categories </Text>
+            <View style={styles.holder}>
+               <Text style={styles.headerSecondary}>Sub-categories </Text>
                <View style={styles.selectBoxContainer}>
                   <SelectBox 
                      status={true}
-                     mode="dropdown" 
-                     selectedValue={categoryValue} 
+                     selectedValue={subCategoryValue} 
                      valueChange={subChangeHandler}
                   >
                      {subCategories}
@@ -238,11 +380,12 @@ function SellScreen (props) {
                </View>
             </View>
 
-            <View>
+            <View style={styles.holder}>
                <Text style={styles.headerSecondary}>City</Text>
                   <TouchableWithoutFeedback
                   
                      onPress={() => {
+                        console.log(locationType);
                         props.navigation.push(locationType, {
                            location: stateName,
                         })
@@ -262,95 +405,125 @@ function SellScreen (props) {
                   </TouchableWithoutFeedback>
                </View>
 
-            <View>
-               <Text style={styles.headerSecondary}>Name / Title</Text>
-               <View style={styles.inputContainer}>
-                  <Input autoCapitalize='words' />
-               </View>
-            </View>
-
-            <View>
+            <View style={styles.holder}>
                <Text style={styles.headerSecondary}>Condition</Text>
                
                <View style={styles.selectBoxContainer}>
                   
                   <Picker
-                     enabled={false}
+                     enabled={true}
                      style={styles.selectBox}
+                     selectedValue={condition}
                      onValueChange={(itemValue, itemIndex) => setCondition(itemValue)}
                   >
                      <Picker.Item label="New" value="New" />
-                     <Picker.Item label="Used" value="Used" />
-                     <Picker.Item label="Refurbished" value="Refurbished" />
+                     <Picker.Item label="Fairly Used" value="Used" />
 
                   </Picker>
 
                </View>
             </View>
 
-            <View>   
+            <View style={styles.holder}>   
                <Text style={styles.headerSecondary}>Price</Text>
                <View style={styles.inputContainer}>
-                  <Input keyboardType="number-pad" />
-               </View>
-            </View>
-
-            <View>
-               <Text style={styles.headerSecondary}>Description</Text>
-               <View style={styles.inputContainer}>
-                  <Input style={styles.input} />
-               </View>
-            </View>
-
-            <View>   
-               <Text style={styles.headerSecondary}>Negotiation</Text> 
-               <View style={styles.switchContainer}>
-                  <Switch
-                     trackColor={{ false: "#767577", true: "#81b0ff" }}
-                     thumbColor={isEnabled ? "#ff6347" : "#f4f3f4"}
-                     ios_backgroundColor="#3e3e3e"
-                     onValueChange={toggleSwitch}
-                     value={isEnabled}
+                  <Input 
+                     placeholder="Price of Product(Numerical Value)"
+                     placeholderTextColor="#cccccc"
+                     keyboardType = "phone-pad"
+                     style={styles.input} 
+                     onChangeText={text => onChangeTextHandler(text, 'price')}
+                     blurOnSubmit={true}
+                     value={price} 
                   />
                </View>
             </View>
 
-            <View>
-               <View style={styles.buttonContainer}>
-
-                  <Button title="Add Photo" color="#00cc00" onPress={pickImage} />
-               </View>
-               <View style={styles.photoContainer}>
-                  {
-                     images.map((image, index) =>(
-                        <View key={index} style={styles.categoryContainer}>
-                        {
-                           image && 
-                           <Image 
-                              source={{ uri: image }} 
-                              style={{resizeMode: "cover", width: 90, height: 90, borderRadius: 5, }} 
-                              
-                           />
-                        }
-                        </View>
-                     ))
-                  }
+            <View style={styles.holder}>
+               <Text style={styles.headerSecondary}>Description</Text>
+               <View style={styles.inputContainer2}>
+                  <Input 
+                     placeholder="Description of Product ( Not less than 30 characters )"
+                     placeholderTextColor="#cccccc"
+                     style={styles.input} 
+                     onChangeText={text => onChangeTextHandler(text, 'description')}
+                     blurOnSubmit={true}
+                     multiline={true}
+                     value = {description}
+                  />
                </View>
             </View>
 
-            <View>
-               <Text style={styles.headerSecondary}>Seller Name: {`${userDetail.firstName} ${userDetail.lastName} `}</Text> 
-               <Text style={styles.headerSecondary}>Seller Phone Number: {userDetail.phoneNumber} </Text> 
+            <View style={styles.negotiationHolder}>
+               <View style={styles.negotiationTextHolder}>
+                  <Text style={styles.headerSecondary}>Negotiation</Text> 
+               </View>   
+               <View style={styles.switchContainer}>
+                  <Switch
+                     trackColor={{ false: "#767577", true: "#00cc00" }}
+                     thumbColor={negotiation ? "#f4f3f4" : "#f4f3f4"}
+                     ios_backgroundColor="#767577"
+                     onValueChange={toggleSwitch}
+                     style={styles.switch}
+                     value={negotiation}
+                  />
+               </View>
+            </View>
+
+            <View style={styles.holder}>
+               <View style={styles.buttonContainer}>
+                  <Button title="Add Photo" color="rgb(255, 128, 128)" onPress={pickImage} />
+               </View>
+               <ScrollView contentContainerStyle={styles.photoHolder} horizontal={true}>
+                  {
+                     images.map((image, index) =>(
+                        <>
+                          
+                           <View key={index} style={styles.photoContainer}>
+                              <Text style={styles.removeImage} onPress={()=>deleteImageHandler(image.uri)}>&times;</Text>
+                           {
+                              image && 
+                              <Image 
+                                 source={{ uri: image.uri }} 
+                                 loadingIndicatorSource={require('../../assets/camera-loader.jpg')}
+                                 style={styles.productImage} 
+                                 
+                              />
+                           }
+                           </View>
+                        </>
+                     ))
+                  }
+               </ScrollView>
+            </View>
+
+            <View style={styles.sellerDetailContainer}>
+               <View style={styles.sellerHolder1}>
+                  <Text style={styles.sellerDetails}>Seller Name:</Text> 
+                  <View style={styles.seller}>
+                     <Text style={styles.sellerText}>{`${userDetails.firstName} ${userDetails.lastName} `}</Text>
+                  </View>
+
+               </View>
+
+               <View style={styles.sellerHolder}>
+                  <Text style={styles.sellerDetails}>Seller Phone Number:</Text> 
+                  <View style={styles.seller}>
+                     <Text style={styles.sellerText}>{userDetails.telephone1} </Text>
+                  </View>
+
+               </View>
             </View>
 
             <View style={styles.submitButtonContainer}>
-               <Button title="Post Product" color="#ff6347" onPress={pickImage} />
+               <Button title="Post Product" color="#ff6347" onPress={addProductHandler} />
             </View>
 
 
          </ScrollView>
             
       </View>
+      </>
             
    )
 
@@ -361,11 +534,26 @@ SellScreen.propTypes = {
 };
 
 const styles = StyleSheet.create({
-   photoContainer: {
+   photoHolder: {
+      overflow: "scroll",
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginTop: 20,
-      marginBottom: 10
+      marginVertical: 10,
+      
+   },
+   photoContainer: {
+      marginRight: 10,
+   },
+   productImage: {
+      resizeMode: "cover", 
+      width: 90, 
+      height: 90, 
+      borderRadius: 5, 
+      borderWidth: 1,
+      borderColor: "#cccccc",
+      elevation: 2,
+   },
+   holder: {
+      marginVertical: 5,
    },
    loading: {
       position: 'absolute',
@@ -391,9 +579,8 @@ const styles = StyleSheet.create({
 
    submitButtonContainer: {
       marginVertical: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      // width: 500,
+      width: "80%",
+      alignSelf: 'center',
    },
 
    categoryContainer: {
@@ -423,16 +610,30 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       borderColor: '#d3d3d3',
       borderWidth: 1,
-      width: 300
+      width: 300,
+      height: 40,
+
    },
-   switchContainer: {
+   inputContainer2: {
       flexDirection: 'row',
       marginVertical: 12,
+      borderColor: '#d3d3d3',
+      borderWidth: 1,
+      width: 300,
+      height: 90,
+
+   },
+   switchContainer: {
       alignItems: 'center',
       width: 300
    },
+   
    input: {
-      height: 70,
+      paddingLeft: 10,
+      fontSize: 14,
+      fontWeight: "bold",
+      color: CustomConstants.darkGray,
+
    },
    headerPrimary: {
       textAlign: 'center',
@@ -443,9 +644,60 @@ const styles = StyleSheet.create({
    },
    headerSecondary: {
       textAlign: 'left',
-      fontSize: 16,
-      color: '#808080',
+      fontSize: 17,
+      color: '#595959',
+      fontWeight: 'bold',
    },
+
+   negotiationHolder: {
+      marginVertical: 18,
+      flexDirection: "row",
+   },
+
+   removeImage:{
+      fontSize: 22,
+      textAlign: "right",
+      fontWeight: "bold",
+   },
+
+   sellerDetailContainer:{
+      backgroundColor: "white",
+      padding: 20,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      marginVertical: 20,
+   },
+   sellerDetails: {
+      textAlign: 'left',
+      fontSize: 15,
+      color: '#595959',
+      fontWeight: 'bold',
+      textTransform: "uppercase"
+   },
+
+   seller:{
+      borderRadius: 8,
+      width: "50%",
+      padding: 3,
+      marginVertical: 5,
+   
+   },
+   sellerText:{
+     textAlign: "center",
+     fontWeight: "600",
+     backgroundColor: CustomConstants.lightGreen,
+     padding: 5,
+
+   },
+   sellerHolder1:{
+     paddingVertical: 10,
+   },
+   sellerHolder:{
+     borderBottomColor: "#595959",
+     borderBottomWidth: 1,
+     paddingVertical: 10,
+   },
+   
    
 });
 

@@ -29,10 +29,10 @@ function Wrapper(props) {
     };
 
     checkLoggedIn();
-  }, [isLoggedIn, props])
+  }, [isOnline, props])
 
   const activateLoginHandler = (status) => {
-    setIsLoggedIn(status)
+    setIsOnline(status)
   }
 
   return (

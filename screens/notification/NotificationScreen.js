@@ -4,6 +4,8 @@ import ImageDisplay from '../../components/ImageDisplay';
 import EmptyDisplay from '../../components/EmptyDisplay';
 import Constants from '../../Constants/constants';
 import Wrapper from '../../HOC/Wrapper';
+import Header from '../../components/layout/Header';
+
 
 
 
@@ -15,7 +17,8 @@ function NotificationScreen(props) {
   const [ dataLoaded, setDataLoaded ] = useState(false);
 
    return (
-      <Wrapper>
+      <>
+      <Header title={"Notification"} />
         {
           dataLoaded ? 
             <View style={styles.container}>
@@ -32,7 +35,7 @@ function NotificationScreen(props) {
           : <EmptyDisplay screen="Notification" />
         }
      
-      </Wrapper>
+      </>
    );
 }
 

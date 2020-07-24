@@ -27,45 +27,17 @@ function Home() {
         name="HomeScreen"
         component={HomeScreen}
         options={{ 
-          headerTitle: props => <Header {...props} title='Home' />,
-          // headerTransparent: true,
-          headerStatusBarHeight: Constants.statusBarHeight,
-          headerBackground: () => (
-            <LinearGradient
-              colors = {
-                [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
-              }
-              locations = {[0, 0.8]}
-              start={[0, 0]}
-              end={[0, 0.2]}
-              style={{
-                flex: 1,
-                // justifyContent: 'center',
-              }}
-            />
-          ),
-         
+          headerShown: false,
+
         }}
       />
 
       <Stack.Screen
         name="SubCategoryScreen"
         component={SubCategoryScreen}
-        options={{ headerTitle: props => <Header {...props} title='Sub-Category' />,
-         headerBackground: () => (
-            <LinearGradient
-              colors = {
-                [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
-              }
-              locations = {[0, 0.8]}
-              start={[0, 0]}
-              end={[0, 0.2]}
-              style={{
-                flex: 1,
-                // justifyContent: 'center',
-              }}
-            />
-          ),
+        options={{ 
+          headerShown: false,
+
        }}
         
       />
@@ -74,28 +46,37 @@ function Home() {
         name="ProductsListScreen"
         component={ProductsListScreen}
         options={{
-          headerTitle: props => <Header {...props} title="Products List" />,
-          headerBackground: () => (
-              <LinearGradient
-                colors = {
-                  [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
-                }
-                locations = {[0, 0.8]}
-                start={[0, 0]}
-                end={[0, 0.2]}
-                style={{
-                  flex: 1,
-                  // justifyContent: 'center',
-                }}
-              />
-            ),
+          headerShown: false,
+
         }}
       />
 
       <Stack.Screen
         name="ProductScreen"
         component={ProductScreen}
-        options={{ headerTitle: props => <Header {...props} /> }}
+        options={{ 
+          // headerTitle: props => {
+          // console.log(props);
+          // return (<Header {...props} title='Home' />)},
+          // headerTransparent: true,
+          // headerStatusBarHeight: Constants.statusBarHeight,
+          headerShown: false
+          // headerBackground: () => (
+          //   <LinearGradient
+          //     colors={
+          //       [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+          //     }
+          //     locations={[0, 0.8]}
+          //     start={[0, 0]}
+          //     end={[0, 0.2]}
+          //     style={{
+          //       flex: 1,
+          //       // justifyContent: 'center',
+          //     }}
+          //   />
+          // ),
+         
+        }}
       />
       
 

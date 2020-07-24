@@ -15,8 +15,8 @@ const ProductCard = (props) => {
 
     const loadProduct = () =>{
         props.navigation.navigate('ProductScreen', {
-            productId: props.id,
-            productName: props.title
+          productId: props.id,
+          productName: props.productTitle
         });
     }
     
@@ -34,10 +34,10 @@ const ProductCard = (props) => {
             <View style={{...styles.card, ...props.style}}>
                 <View style={styles.logoContainer}>
                 
-                    <ImageDisplay
-                        style={styles.tinyLogo}
-                        source={require('../assets/gadgets.jpg')} 
-                    />
+                  <ImageDisplay
+                    style={styles.tinyLogo}
+                    source={require('../assets/gadgets.jpg')} 
+                  />
                 </View>
                 <View style={styles.descriptionContainer}>
                     <View>

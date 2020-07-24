@@ -28,23 +28,24 @@ function Sell() {
         name="SellScreen"
         component={SellScreen}
         options={{ 
-          headerTitle: props => <Header {...props} title='Sell' />,
-          // headerTransparent: true,
-          headerStatusBarHeight: Constants.statusBarHeight,
-          headerBackground: () => (
-            <LinearGradient
-              colors = {
-                [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
-              }
-              locations = {[0, 0.8]}
-              start={[0, 0]}
-              end={[0, 0.2]}
-              style={{
-                flex: 1,
-                // justifyContent: 'center',
-              }}
-            />
-          ),
+          headerShown: false,
+          // headerTitle: props => <Header {...props} title='Sell' />,
+          // // headerTransparent: true,
+          // headerStatusBarHeight: Constants.statusBarHeight,
+          // headerBackground: () => (
+          //   <LinearGradient
+          //     colors = {
+          //       [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+          //     }
+          //     locations = {[0, 0.8]}
+          //     start={[0, 0]}
+          //     end={[0, 0.2]}
+          //     style={{
+          //       flex: 1,
+          //       // justifyContent: 'center',
+          //     }}
+          //   />
+          // ),
          
         }}
       />
@@ -53,17 +54,19 @@ function Sell() {
         name="StateScreen"
         component={StateScreen}
         options={{
-          headerTitle: props => <Header {...props} />,
-          headerLeft: (props) => (
-            <HeaderBackButton
-              {...props}
-              onPress={() => {
-                // Do something
-                navigation.navigate('SellScreen')
+           headerShown: false,
+          // headerTitle: props => <Header {...props} />,
+          // headerLeft: (props) => (
+          //   <HeaderBackButton
+          //     {...props}
+          //     onPress={() => {
+          //       // Do something
+          //       navigation.navigate('SellScreen')
                 
-              }}
-            />
-          ),
+          //     }}
+          //   />
+          // ),
+
         }}
       />
 
@@ -71,17 +74,18 @@ function Sell() {
         name = "LGAScreen"
         component={LGAScreen}
         options={{
-          headerTitle: props => <Header {...props} />,
-          headerLeft: (props) => (
-            <HeaderBackButton
-              {...props}
-              onPress={() => {
-                // Do something
-                navigation.navigate('StateScreen')
+          headerShown: false,
+          // headerTitle: props => <Header {...props} />,
+          // headerLeft: (props) => (
+          //   <HeaderBackButton
+          //     {...props}
+          //     onPress={() => {
+          //       // Do something
+          //       navigation.navigate('StateScreen')
                 
-              }}
-            />
-          ),
+          //     }}
+          //   />
+          // ),
         }}
       />
 

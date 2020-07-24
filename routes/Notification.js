@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 //SCREENS
 import NotificationScreen from '../screens/notification/NotificationScreen';
 
+
 const Stack = createStackNavigator();
 
 function Notification() {
@@ -23,23 +24,24 @@ function Notification() {
         name="NotificationScreen"
         component={NotificationScreen}
         options={{ 
-          headerTitle: props => <Header {...props} title='Notification' />,
-          headerTransparent: true,
-          headerStatusBarHeight: Constants.statusBarHeight,
-          headerBackground: () => (
-            <LinearGradient
-              colors = {
-                [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
-              }
-              locations = {[0, 0.8]}
-              start={[0, 0]}
-              end={[0, 0.2]}
-              style={{
-                flex: 1,
-                // justifyContent: 'center',
-              }}
-            />
-          ),
+          headerShown: false,
+          // headerTitle: props => <Header {...props} title='Notification' />,
+          // headerTransparent: true,
+          // headerStatusBarHeight: Constants.statusBarHeight,
+          // headerBackground: () => (
+          //   <LinearGradient
+          //     colors = {
+          //       [Constants.headerPrimaryGradient, Constants.headerSecondaryGradient]
+          //     }
+          //     locations = {[0, 0.8]}
+          //     start={[0, 0]}
+          //     end={[0, 0.2]}
+          //     style={{
+          //       flex: 1,
+          //       // justifyContent: 'center',
+          //     }}
+          //   />
+          // ),
          
         }}
       />

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
 import CategoryList from '../../components/CategoryList';
+import SearchHeader from '../../components/layout/SearchHeader';
+
 
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -36,38 +38,53 @@ function LGAScreen (props) {
     let storageKey = `${location}LGA`.replace(/\s/g, "");
 
     setStateName(location);
+   console.log(location);
+    setIsLoading(true);  
+    if (location == 'Federal Capital Territory') {
+       setIsLoading(false);
 
-    setIsLoading(true);     
-    fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${location}/lgas`)
-        .then(response => response.json())
-        .then(function (data) {
-         setIsLoading(false);
-          AsyncStorage.setItem(storageKey, JSON.stringify(data));
-           AsyncStorage.getItem(storageKey)
-             .then((value) => {
-               if (value !== null) {
-                 setList(JSON.parse(value))
-               }
+       let abj = ["FCT"]
 
-             })
-             .catch((error) => {
+       console.log(abj);
+       setList(abj)
+       
+    }else{
+
+       fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${location}/lgas`)
+           .then(response => response.json())
+           .then(function (data) {
+            setIsLoading(false);
+             AsyncStorage.setItem(storageKey, JSON.stringify(data));
+              AsyncStorage.getItem(storageKey)
+                .then((value) => {
+                  if (value !== null) {
+   
+                     console.log(value);
+                    setList(JSON.parse(value))
+                  }
+   
+                })
+                .catch((error) => {
+                  console.log('Error:', error);
+                });
+   
+           })
+           .catch((error) => {
+               setIsLoading(false);
                console.log('Error:', error);
-             });
-
-        })
-        .catch((error) => {
-            setIsLoading(true);
-            console.log('Error:', error);
-        });
+           });
+    }
 
  
-   }, [props])
+   }, [])
 
 
 
          
 
    return ( 
+      <>
+      <SearchHeader title="LGA" page="StateScreen" navigation={props.navigation} />
       <View>
          <ActivityIndicator 
             animating={isLoading}
@@ -113,6 +130,7 @@ function LGAScreen (props) {
     
          </ScrollView>
       </View>
+      </>
       
    );
    

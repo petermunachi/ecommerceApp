@@ -25,7 +25,7 @@ function SelectBox(props) {
       >
         {
           children.map((data) => (
-            <Picker.Item key={data.id} label={capitalizeFirstLetter(data.name)} value={data.id} />
+            <Picker.Item key={data._id} label={capitalizeFirstLetter(data.name)} value={data._id} />
           ))
         }
       </Picker>
