@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import ImageDisplay from "../components/ImageDisplay";
-import Constants from "../Constants/constants";
+import CustomConstants from "../Constants/constants";
 
 const ProductCard = (props) => {
     let descProps = props.productDescription;
@@ -27,16 +27,17 @@ const ProductCard = (props) => {
             // activeOpacity={0.8} 
             onPress={loadProduct}
             background = {
-                TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
+                TouchableNativeFeedback.Ripple(CustomConstants.ripple, false, 0)
             }
         >
+
 
             <View style={{...styles.card, ...props.style}}>
                 <View style={styles.logoContainer}>
                 
                   <ImageDisplay
                     style={styles.tinyLogo}
-                    source={require('../assets/gadgets.jpg')} 
+                    source = {{uri: `http://192.168.43.12:3000/${props.productPictures[0]}`}}
                   />
                 </View>
                 <View style={styles.descriptionContainer}>
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    height: 145,
+    height: 190,
     overflow: "hidden",
     marginTop: 12,
   },
@@ -83,34 +84,36 @@ const styles = StyleSheet.create({
   },
 
   descriptionContainer: {
-    width: "50%",
-    paddingVertical: 45,
+    width: "60%",
+    paddingVertical: "15%",
     paddingLeft: 8,
     paddingRight: 0,
-    alignItems: "flex-start"
     // height: "100%",
   },
   headerPrimary: {
     color: "rgb(0, 0, 0)",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 17,
     textTransform: "capitalize",
     textAlign: "left",
   },
   headerSecondary:{
-    color: Constants.darkGray,
-    fontSize: 12,
+    color: CustomConstants.darkGray,
+    fontSize: 14,
+    textAlign: "left",
 
   },
   headerTertiary:{
-    color: Constants.darkGray,
+    color: CustomConstants.darkGray,
     textTransform: "capitalize",
     fontWeight: "bold",
-    fontSize: 13,
+    fontSize: 15,
 
   },
   tinyLogo: {
       borderRadius: 8,
+      resizeMode: "cover",
+      overflow: "hidden",
   },
   textUnderline:{
     color: "rgb(0, 0, 0)",
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
       marginVertical: 8,
   },
   priceContainer:{
-    backgroundColor: Constants.lightGreen,
+    backgroundColor: CustomConstants.lightGreen,
     borderRadius: 8,
     width: 80,
     padding: 3,

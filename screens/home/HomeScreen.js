@@ -57,15 +57,16 @@ useEffect(() => {
       console.log('Error', err);
     });
 
-  fetch('/api/trendingProducts')
+  fetch(`http://${Constants.host}:3000/shoppay/latest_product`)
     .then(response => response.json())
     .then((data) => {
+      console.log(data);
       AsyncStorage.setItem('trendingProducts', JSON.stringify(data));
       // setMainCategories(productMainCategories)
     })
     .catch(err => {
       console.log('Error', err);
-      AsyncStorage.setItem('trendingProducts', JSON.stringify(products));
+      // AsyncStorage.setItem('trendingProducts', JSON.stringify(products));
       // setMainCategories(productMainCategories)
     });
 
@@ -83,6 +84,12 @@ if (showCategories) {
       useForeground={false} 
       background={TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)}
       key={data._id}
+      onPress={()=>{
+        props.navigation.navigate('SubCategoryScreen', {
+          categoryId: data._id,
+          categoryName: data.name,
+        })
+      }}
     >
       <View style={styles.mainCategoriesContainer} >
         <Text style={styles.mainCategoriesText}>{data.name}</Text>
@@ -96,28 +103,7 @@ if (showCategories) {
 }
   
 
-  const list = trendingProducts.map((data) =>(
-    <TouchableWithoutFeedback
-      key={data.id}
-      onPress={() => {
-        props.navigation.navigate('ProductScreen', {
-          productId: data.id,
-          productName: data.model || data.title,
-        });
-      }}
-    >
-      <View style={styles.categoryContainer}>
-        <ProductList
-          name={data.model || data.title}
-          price={data.price}
-          location={data.region}
-          photo={data.photo[0]}
-          phoneNumber={data.sellerPhoneNumber}
-          navigation={props.navigation}
-        />
-      </View>
-    </TouchableWithoutFeedback>
-  ))
+  
 
   return (
     <>
@@ -128,57 +114,58 @@ if (showCategories) {
       />
 
       
-      <View>
-        <View style={styles.topContainer}>
+      
+
+      <FlatList
+        ListHeaderComponent={
+          <>
           <View>
-            <Text style={styles.headerSecondary}>Categories (224) </Text>
-          </View>
-
-          <View style={styles.buttonContainer}>
-
-            <View style={styles.button}>
-              <Button color="rgb(255, 128, 128)" title="All" />
-            </View>
-
-            <View style={styles.button}>
-              <Button color="lightgray" title="Fashion" />
-            </View>
-
-
-            <TouchableNativeFeedback 
-              useForeground={false} 
-              onPress = {
-                () => {
-                  setShowCategories(prevState=> !prevState);
-                  if (showCategoriesText == "See All")
-                    setShowCategoriesText("Show Less");
-                  else
-                    setShowCategoriesText("See All");
-                }
-              }
-              background = {
-                  TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
-              }
-            >
-
-              <View style={styles.more}>
-                <Text style={styles.textUnderline}>{showCategoriesText}</Text>
+            <View style={styles.topContainer}>
+              <View>
+                <Text style={styles.headerSecondary}>Categories (224) </Text>
               </View>
-            </TouchableNativeFeedback>
-          </View>
+
+              <View style={styles.buttonContainer}>
+
+                <View style={styles.button}>
+                  <Button color="rgb(255, 128, 128)" title="All" />
+                </View>
+
+                <View style={styles.button}>
+                  <Button color="lightgray" title="Fashion" />
+                </View>
 
 
-          
-        </View>
+                <TouchableNativeFeedback 
+                  useForeground={false} 
+                  onPress = {
+                    () => {
+                      setShowCategories(prevState=> !prevState);
+                      if (showCategoriesText == "See All")
+                        setShowCategoriesText("Show Less");
+                      else
+                        setShowCategoriesText("See All");
+                    }
+                  }
+                  background = {
+                      TouchableNativeFeedback.Ripple(Constants.ripple, false, 0)
+                  }
+                >
+
+                  <View style={styles.more}>
+                    <Text style={styles.textUnderline}>{showCategoriesText}</Text>
+                  </View>
+                </TouchableNativeFeedback>
+              </View>
+
+
+              
+            </View>
           
 
       </View>
 
         
-
-      <FlatList
-        ListHeaderComponent={
-          <>
             <View style={styles.mainCategoriesSection}>
               {categoriesList}
             </View>
@@ -198,7 +185,8 @@ if (showCategories) {
             productTitle={itemData.item.title}
             productDescription={itemData.item.description}
             productPrice={itemData.item.price}
-            productLocation={itemData.item.region}
+            productLocation={itemData.item.location}
+            productPictures={itemData.item.picture}
             navigation={props.navigation}
           />
         }
@@ -245,14 +233,18 @@ const styles = StyleSheet.create({
   mainCategoriesSection: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginVertical: 13,
+    marginVertical: 10,
+    width: "100%",
+    alignSelf: "center",
+    justifyContent: "center"
 
   },
   mainCategoriesText: {
-   textAlign: "justify",
+   textAlign: "center",
    textTransform: "capitalize",
    fontWeight: "bold",
    color: Constants.lightGray,
+   fontSize: 16,
   },
   mainCategoriesContainer: {
     marginRight: 10,
@@ -260,6 +252,8 @@ const styles = StyleSheet.create({
     backgroundColor: Constants.lightGreen,
     padding: 10,
     elevation: 5,
+    width: "45%",
+    alignItems: "center",
 
   },
   marginVerticalMedium: {

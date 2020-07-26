@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     color: "rgb(230, 230, 230)",
     fontWeight: "bold",
     fontSize: 22,
+    textTransform: "capitalize",
     // fontFamily: "Montserrat",
   },
 

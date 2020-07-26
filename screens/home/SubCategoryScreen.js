@@ -16,6 +16,8 @@ import { productSubCategories } from '../../testData';
 
 import CategoryList from '../../components/CategoryList';
 import Header from '../../components/layout/Header';
+import CustomConstants from '../../Constants/constants';
+
 
 
 
@@ -30,30 +32,26 @@ function SubCategoryScreen(props) {
   useEffect(() => {
     const { categoryId, categoryName } = props.route.params;
     
-    let item = `${categoryName}subcategories`.replace(/\s/g, "");
 
     setIsLoading(true);
+    // console.log(categoryId);
 
-    fetch(`/api/subCategories/:${categoryId}`)
+    fetch(`http://${CustomConstants.host}:3000/shoppay/get_subcategory/${categoryId}`)
       .then(response => response.json())
       // eslint-disable-next-line no-unused-vars
       .then(function(data) {
-        AsyncStorage.setItem(item, JSON.stringify(data));
+        setSubCategories(data);
+        console.log(data);
         setIsLoading(false);
 
       })
       .catch((error) => {
         console.log('Error:', error);
-        AsyncStorage.setItem(item, JSON.stringify(productSubCategories));
         setIsLoading(false);
 
       });
 
-    AsyncStorage.getItem(item)
-      .then((value) => setSubCategories(JSON.parse(value)))
-        
-
-
+  
    
   },[])
 
@@ -64,24 +62,29 @@ function SubCategoryScreen(props) {
 
   return (
     <>
-    <Header title={"Sub-category"} />
+    <Header title={categoryName} />
     <View style={styles.screen}>
-      <ActivityIndicator 
-        animating={isLoading}
-        size="large"
-        color="#00ff00"
-      />
+      {
+        isLoading ?
+            <View style={styles.loading}>
+              <ActivityIndicator 
+                  animating={isLoading}
+                  size={70}
+                  color = "rgb(153, 0, 115)"
+              />
+            </View>
+        
+        : null
+      }
 
-      <Text style={styles.headerPrimary}>SUB CATEGORIES SCREEN </Text>
       <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
-        <Text style={styles.headerPrimary}> {categoryName} categories </Text>
 
         <View style={styles.categoryListContainer}>
           {
           
             subCategories.map((data) =>(
               <TouchableWithoutFeedback
-                key={data.id}
+                key={data._id}
                 onPress={() => {
                   props.navigation.navigate('ProductsListScreen', {
                     subCategoryId: data.id,
@@ -90,10 +93,7 @@ function SubCategoryScreen(props) {
                 }}
               >
                 <View style={styles.categoryContainer}>
-                  <CategoryList
-                    id={data.id}
-                    name={data.name}
-                  />
+                  <Text style={styles.headerPrimary}>{data.name}</Text>
                 </View>
               </TouchableWithoutFeedback>
             ))
@@ -112,12 +112,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    marginTop: 20,
+    marginTop: 0,
+    paddingBottom: "50%",
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "rgba(191, 189, 189, 0.50)",
+    zIndex: 100,
   },
   categoryListContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 20,
+    marginTop: 0,
     marginBottom: 10
   },
   categoryContainer: {
@@ -128,12 +140,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerPrimary: {
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  lottie: {
-    width: 100,
-    height: 100,
+    textAlign: 'left',
+    fontSize: 18,
+    textTransform: "capitalize",
   }
 
 });

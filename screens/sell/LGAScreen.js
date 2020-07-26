@@ -15,6 +15,9 @@ import {
 import CategoryList from '../../components/CategoryList';
 import SearchHeader from '../../components/layout/SearchHeader';
 
+import CustomConstants from '../../Constants/constants';
+
+
 
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -28,55 +31,40 @@ function LGAScreen (props) {
    const [isLoading, setIsLoading] = useState(false);
    const [stateName, setStateName] = useState('');
    const [isEnabled, setIsEnabled] = useState(false);
+   const [isLocation, setIsLocation] = useState('');
 
 
 
   useEffect(() => {
 
-    const { location } = props.route.params;   
+    const { location } = props.route.params;  
+    console.log('location',location); 
+    setIsLocation(location)
 
     let storageKey = `${location}LGA`.replace(/\s/g, "");
 
     setStateName(location);
    console.log(location);
-    setIsLoading(true);  
-    if (location == 'Federal Capital Territory') {
-       setIsLoading(false);
+   setIsLoading(true);  
+   fetch(`http://${CustomConstants.host}:3000/shoppay/lga/${location}`)
+      .then(response => response.json())
+      .then(function (data) {
+         // console.log(arrayData);
+         setList(data)
+         console.log(list);
+         setIsLoading(false);
 
-       let abj = ["FCT"]
 
-       console.log(abj);
-       setList(abj)
-       
-    }else{
+      })
+      .catch((error) => {
+         setIsLoading(false);
+         console.log('Error:', error);
+      });
+   
 
-       fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${location}/lgas`)
-           .then(response => response.json())
-           .then(function (data) {
-            setIsLoading(false);
-             AsyncStorage.setItem(storageKey, JSON.stringify(data));
-              AsyncStorage.getItem(storageKey)
-                .then((value) => {
-                  if (value !== null) {
-   
-                     console.log(value);
-                    setList(JSON.parse(value))
-                  }
-   
-                })
-                .catch((error) => {
-                  console.log('Error:', error);
-                });
-   
-           })
-           .catch((error) => {
-               setIsLoading(false);
-               console.log('Error:', error);
-           });
-    }
 
  
-   }, [])
+   }, [props])
 
 
 
@@ -86,13 +74,18 @@ function LGAScreen (props) {
       <>
       <SearchHeader title="LGA" page="StateScreen" navigation={props.navigation} />
       <View>
-         <ActivityIndicator 
-            animating={isLoading}
-            size="large"
-            color="#00ff00"
-         />
-         <Text style={styles.headerPrimary}>{stateName} LGA SCREEN </Text>
-         
+         {
+            isLoading ?
+               <View style={styles.loading}>
+                  <ActivityIndicator 
+                     animating={isLoading}
+                     size={70}
+                     color = "rgb(153, 0, 115)"
+                  />
+               </View>
+            
+            : null
+         }
          <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
             <View style={styles.categoryListContainer}>
             {
@@ -100,17 +93,10 @@ function LGAScreen (props) {
                   <TouchableWithoutFeedback
                      key={index}
                      onPress = {() => {
-                        const obj = {
-                           city: data,
-                           state: stateName
-                        }
-                        AsyncStorage.setItem('city', JSON.stringify(obj));
+                       
+                        AsyncStorage.setItem('city', data.name);
 
-                        props.navigation.navigate('SellScreen', {
-                           type: "lga",
-                           location: data,
-                           stateName: stateName,
-                        })
+                        props.navigation.push('SellScreen')
                      
 
                      }
@@ -120,7 +106,7 @@ function LGAScreen (props) {
                         
                         <CategoryList
                            id={index}
-                           name={`${data} Local Government`}
+                           name={`${data.name}`}
                         />
                      </View>
                   </TouchableWithoutFeedback>
@@ -142,12 +128,24 @@ const styles = StyleSheet.create({
       flex: 1,
    },
    scrollView: {
-      marginTop: 20,
+      marginTop: 0,
+      paddingBottom: "50%",
+   },
+   loading: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: "rgba(191, 189, 189, 0.50)",
+      zIndex: 100,
    },
    categoryListContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginTop: 20,
+      marginTop: 0,
       marginBottom: 10
    },
    categoryContainer: {
@@ -160,10 +158,6 @@ const styles = StyleSheet.create({
    headerPrimary: {
       textAlign: 'center',
       fontSize: 20
-   },
-   lottie: {
-      width: 100,
-      height: 100,
    }
 
 });

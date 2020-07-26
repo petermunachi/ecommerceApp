@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
 
 SelectBox.propTypes = {
   mode: PropTypes.string,
-  selectedValue: PropTypes.number,
   style: PropTypes.object,
   children: PropTypes.array,
   valueChange: PropTypes.func,

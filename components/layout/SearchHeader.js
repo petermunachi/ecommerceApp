@@ -74,9 +74,7 @@ function SearchHeader(props) {
             onPress={
                 () => props.navigation.navigate(props.page)
             }
-            background = {
-                TouchableNativeFeedback.Ripple(CustomConstants.ripple, false, 0)
-            }
+           
         >
 
         <View style={styles.logoContainer}>

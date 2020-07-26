@@ -71,12 +71,6 @@ const App = () =>{
     );
   }
 
-  // if (loading) {
-  //   // We haven't finished checking for the token yet
-  //   return <IndexScreen /> ;
-  // }
-
-
     const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -98,6 +92,7 @@ const App = () =>{
           };
         case 'SIGN_OUT':
           AsyncStorage.removeItem('loggedIn')
+          AsyncStorage.removeItem('city')
           return {
             ...prevState,
             isSignout: true,
@@ -182,7 +177,12 @@ const App = () =>{
 
       >
         { state.isLoading == true ? (
-            <Tab.Screen name="IndexScreen" component={IndexScreen} />
+            <Tab.Screen name="IndexScreen" component={IndexScreen} 
+              options={{ 
+                headerShown: false,
+                tabBarVisible: false
+              }}
+            />
 
         ): state.userLoggedIn == null ? (
 

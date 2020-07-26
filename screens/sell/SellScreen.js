@@ -37,9 +37,6 @@ import CustomConstants from '../../Constants/constants';
 import Header from '../../components/layout/Header';
 
 
-
-
-
 function SellScreen (props) {
 
   
@@ -49,8 +46,6 @@ function SellScreen (props) {
    const [mainCategoryValue, setMainCategoryValue] = useState(null);
    const [subCategoryValue, setSubCategoryValue] = useState('');
    const [city, setCity] = useState('');
-   const [locationType, setLocationType] = useState('StateScreen');
-   const [stateName, setStateName] = useState('');
    const [condition, setCondition] = useState('New');
    const [isLoading, setIsLoading] = useState(false);
    const [negotiation, setNegotiation] = useState(false);
@@ -71,7 +66,6 @@ function SellScreen (props) {
          .then(response => response.json())
          .then(function (data) {
             setIsLoading(false);
-            // console.log(data);
             AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
          })
          .catch((error) => {
@@ -85,67 +79,48 @@ function SellScreen (props) {
          });
 
       
-       
-      retrieveData();
-      getPermissionAsync();
-
-
-   }, [props])
-
-
-   const retrieveData = () => {
-      AsyncStorage.getItem('city')
-         .then((value) => {
-            let region = JSON.parse(value);
-            // console.log(region);
-
-            setCity(region.city);
-            setLocationType('LGAScreen');
-            setStateName(region.state);
-         })
-         .catch((error) => {
-            console.log('Error:', error);
-         });
 
       AsyncStorage.getItem('loggedIn')
          .then((value) => {
             let data = JSON.parse(value)[0];
-            // console.log(data.firstName);
             setUserDetails(data);
-            // console.log(userDetails);
+         })
+         .catch((error) => {
+            console.log('Error:', error);
+         });
+      AsyncStorage.getItem('city')
+         .then((value) => {
+            console.log(value);
+            setCity(value)
 
          })
          .catch((error) => {
             console.log('Error:', error);
          });
+
       
-   }
+      getPermissionAsync();
+
+
+   },[props, city])
+
 
 
    const fetchSubCategories = (itemValue) => {
-      // let itemKey = `${categoryName}subcategories`.replace(/\s/g, "");
-      // console.log(mainCategoryValue);
-
+      
       fetch(`http://${CustomConstants.host}:3000/shoppay/get_subcategory/${itemValue}`)
          .then(response => response.json())
-         .then(function (data) {
-            // setCategoryName(data.name)
-            console.log(data);
-            console.log(itemValue);
+         .then(function (data) {            
             setSubCategories(data)
 
-            // AsyncStorage.setItem(itemKey, JSON.stringify(data));
 
          })
          .catch((error) => {
             console.log('Error:', error);
-            // AsyncStorage.setItem(itemKey, JSON.stringify(productSubCategories));
 
          });
 
-      // AsyncStorage.getItem(itemKey)
-      //    .then((value) => setSubCategories(JSON.parse(value)))
-
+     
    }
 
 
@@ -173,7 +148,6 @@ function SellScreen (props) {
            checkImageSize(result)
          }
 
-         console.log(result);
       } catch (E) {
          console.log(E);
       }
@@ -182,12 +156,11 @@ function SellScreen (props) {
      
 
    const onChangeHandler = (itemValue, itemIndex) => {
-      console.log(itemValue);
       setMainCategoryValue(itemValue);
       fetchSubCategories(itemValue);
    }
 
-   const subChangeHandler = (itemValue, itemIndex) => setSubCategoryValue(itemValue)
+   const subChangeHandler = (itemValue, itemIndex) => setSubCategoryValue(itemValue);
 
    const toggleSwitch = () => setNegotiation(previousState => !previousState)
 
@@ -208,7 +181,6 @@ function SellScreen (props) {
                
             }else{
                setImages(prevImages => [...prevImages, imageUrl]);
-               console.log(images);
             }
 
          })
@@ -233,44 +205,19 @@ function SellScreen (props) {
    const addProductHandler = () => {
       
       setIsLoading(true);
+
+      let pictures = [];
+
+      for (let i = 0; i < images.length; i++) {
+         pictures.push({ photobase64: images[i].base64, photourl: images[i].uri })
+
+      }
       const data = {
-         sellerId: userDetails._id,
-         title: title,
-         location: city,
-         description: description,
-         condition: condition,
-         categories: mainCategoryValue,
-         pcategories: subCategoryValue,
-         price: price,
-         picture: images,
-         negotiation: negotiation
+         sellerId: userDetails._id, title: title, location: city,
+         description: description, condition: condition,
+         categories: mainCategoryValue, pcategories: subCategoryValue,
+         price: price, picture: pictures, negotiation: negotiation
       };
-
-      let formData = new FormData();
-
-      formData.append('sellerId', userDetails._id);
-      formData.append('title', title);
-      formData.append('location', city);
-      formData.append('description', description);
-      formData.append('condition', condition);
-      formData.append('categories', mainCategoryValue);
-      formData.append('pcategories', subCategoryValue);
-      formData.append('price', price);
-      formData.append('negotiation', negotiation);
-
-      // for (let i = 0; i < images.length; i++) {
-      //    formData.append('picture', {
-      //       uri: images[i].uri,
-      //       type: 'image/jpeg',
-      //       name: 'profile-picture'
-      //    });
-      // }
-
-      // console.log(images);
-      // const newImageUri = images[0].uri;
-      
-      // console.log(JSON.stringify(images[0].uri));
-      // console.log(formData);
 
       fetch(`http://${CustomConstants.host}:3000/shoppay/add_product`, {
          method: 'POST', 
@@ -278,16 +225,12 @@ function SellScreen (props) {
             'Accept': 'application/json',
             "Content-Type": "application/json",
          },
-         body: JSON.stringify({
-            picture: btoa(images[0].uri)
-         }),
+         body: JSON.stringify(data),
 
-    })
+      })
       .then(response => response.json())
       .then(data => {
          setIsLoading(false)
-
-         // console.log(data);
          if (data.status == 1) { 
             Alert.alert(
             '',
@@ -319,6 +262,7 @@ function SellScreen (props) {
 
    }
 
+
    return (
       <>
       <Header title={"Sell"} />
@@ -336,6 +280,7 @@ function SellScreen (props) {
             
             : null
          }
+
 
          <ScrollView keyboardShouldPersistTaps="never" decelerationRate="fast" contentContainerStyle={styles.scrollView}>
 
@@ -385,10 +330,7 @@ function SellScreen (props) {
                   <TouchableWithoutFeedback
                   
                      onPress={() => {
-                        console.log(locationType);
-                        props.navigation.push(locationType, {
-                           location: stateName,
-                        })
+                        props.navigation.navigate("StateScreen")
                         
                      }}
                   >

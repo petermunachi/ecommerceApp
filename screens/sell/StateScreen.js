@@ -12,6 +12,7 @@ import {
     StyleSheet,
 } from 'react-native';
 // import AnimatedLoader from "react-native-animated-loader";
+import CustomConstants from '../../Constants/constants';
 import CategoryList from '../../components/CategoryList';
 import SearchHeader from '../../components/layout/SearchHeader';
 
@@ -26,28 +27,22 @@ function StateScreen(props) {
 
    useEffect(() => {
       setIsLoading(true);
-      fetch('http://locationsng-api.herokuapp.com/api/v1/states')
+      fetch(`http://${CustomConstants.host}:3000/shoppay/states`)
          .then(response => response.json())
          .then(function (data) {
-            AsyncStorage.setItem('nigerianstates', JSON.stringify(data));
-            AsyncStorage.getItem('nigerianstates')
-               .then((value) => {
-                  setIsLoading(false);
-                  if (value !== null) {
-                     console.log(value);
-                     setList(JSON.parse(value))
-                  }
+            // console.log(arrayData);
+            setList(data)
+            // console.log(list);
+            setIsLoading(false);
 
-               })
-               .catch((error) => {
-                  setIsLoading(false);
-                  console.log('Error:', error);
-               });
+         
+
 
 
          })
          .catch((error) => {
             console.log('Error:', error);
+            setIsLoading(false);
          });
 
       
@@ -60,14 +55,18 @@ function StateScreen(props) {
       <>
       <SearchHeader title="State" page="SellScreen" navigation={props.navigation} />
       <View>
-         <View style={styles.loaderContainer}>
-            <ActivityIndicator 
-               animating={isLoading}
-               size="large"
-               color="#00ff00"
-            />
-         </View>
-         <Text style={styles.headerPrimary}>STATES SCREEN </Text>
+         {
+            isLoading ?
+               <View style={styles.loading}>
+                  <ActivityIndicator 
+                     animating={isLoading}
+                     size={70}
+                     color = "rgb(153, 0, 115)"
+                  />
+               </View>
+            
+            : null
+         }
          <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
             <View style={styles.categoryListContainer}>
             {
@@ -76,14 +75,13 @@ function StateScreen(props) {
                      key={index}
                      onPress = {() => {
                            props.navigation.navigate('LGAScreen', {
-                              location: data.name,
+                              location: data.id,
                            })
                         
                         }
                      }
                   >
                      <View style={styles.categoryContainer}>
-                        
                         <CategoryList
                            id={index}
                            name={`${data.name} State`}
@@ -103,24 +101,27 @@ function StateScreen(props) {
 }
 
 const styles = StyleSheet.create({
-   lottie: {
-      width: 100,
-      height: 100,
-   },
+  
    screen: {
       flex: 1,
    },
    scrollView: {
-      marginTop: 20,
+      marginTop: 0,
+      paddingBottom: "50%",
    },
    horizontal: {
       padding: 10
    },
-   loaderContainer: {
-      margin: 0,
+   loading: {
       position: 'absolute',
-      top: 50,
-      left: 50,
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: "rgba(191, 189, 189, 0.50)",
+      zIndex: 100,
    },
    categoryListContainer: {
       flexDirection: 'row',
