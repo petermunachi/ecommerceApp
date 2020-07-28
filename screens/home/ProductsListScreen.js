@@ -5,16 +5,24 @@ import {
   View,
   Text,
   AsyncStorage,
-  ScrollView,
   TouchableWithoutFeedback,
-  ActivityIndicator,
-  StyleSheet
+  TouchableNativeFeedback,
+  StyleSheet,
+  StatusBar,
+  SafeAreaView,
+  VirtualizedList,
+  FlatList,
+  Button,
 } from 'react-native';
 
 import { products } from '../../testData';
 
 import ProductList from '../../components/ProductList';
 import Header from '../../components/layout/Header';
+import ProductCard from '../../components/ProductCard';
+import CustomConstants from '../../Constants/constants';
+
+
 
 
 
@@ -30,75 +38,67 @@ function ProductsListScreen(props) {
     setIsLoading(true);
 
     let itemKey = `${subCategoryName}products`.replace(/\s/g, "");
+    console.log(subCategoryId);
 
-    fetch(`/api/productsList/:${subCategoryId}`)
+    fetch(`http://${CustomConstants.host}:3000/shoppay/product_list/${subCategoryId}`)
       .then((resp) => resp.json())
       // eslint-disable-next-line no-unused-vars
       .then(function(data) {
+        console.log(data);
         AsyncStorage.setItem(itemKey, JSON.stringify(data));
         setIsLoading(false);
 
       })
       .catch((error) => {
         console.log('Error:', error);
-        AsyncStorage.setItem(itemKey, JSON.stringify(products));
-        AsyncStorage.getItem(itemKey)
-          .then((value) => setItems(JSON.parse(value)))
-
+        // AsyncStorage.setItem(itemKey, JSON.stringify(products));
+       
         setIsLoading(false);
 
       });
+
+      AsyncStorage.getItem(itemKey)
+        .then((value) => setItems(JSON.parse(value)))
+
 
     
   },[])
 
   const { subCategoryName} = props.route.params;
 
-  const list = items.map((data) =>(
-    <TouchableWithoutFeedback
-      key={data.id}
-      onPress={() => {
-        props.navigation.navigate('ProductScreen', {
-          productId: data.id,
-          productName: data.model || data.title,
-        });
-      }}
-    >
-      <View style={styles.categoryContainer}>
-        <ProductList
-          name={data.model || data.title}
-          price={data.price}
-          location={data.region}
-          photo={data.photo[0]}
-          phoneNumber={data.sellerPhoneNumber}
-          navigation={props.navigation}
-        />
-      </View>
-    </TouchableWithoutFeedback>
-  ))
-
+ 
 
   return (
     <>
     <Header title={"Product Lists"} />
-    <View style={styles.screen}>
+      <SafeAreaView  style={styles.screen}>
+        <StatusBar barStyle="dark-content" 
+          backgroundColor={CustomConstants.statusBarColor} 
+        />
+        <FlatList
 
-      <ActivityIndicator 
-        animating={isLoading}
-        size="large"
-        color="#00ff00"
-      />
+          ListEmptyComponent={
+            <>
+              <Text>Loading products</Text>
+            </>
+          }
+          keyExtractor={(item, index) => index}
+          data={items}
+          renderItem={ itemData =>  <ProductCard 
+            productTitle={itemData.item.title}
+            productDescription={itemData.item.description}
+            productPrice={itemData.item.price}
+            productLocation={itemData.item.location}
+            productPictures={itemData.item.picture}
+            navigation={props.navigation}
+          />
+          
+          }
+          
+        />
 
-      <Text style={styles.headerPrimary}>PRODUCTS LISTS SCREEN </Text>
-      <ScrollView decelerationRate="fast" contentContainerStyle={styles.scrollView}>
-        <Text style={styles.headerPrimary}> {subCategoryName} products </Text>
-
-        <View style={styles.categoryListContainer}>
-          {list}
-        </View>
-
-      </ScrollView>
-    </View>
+          
+      </SafeAreaView>
     </>
   );
 

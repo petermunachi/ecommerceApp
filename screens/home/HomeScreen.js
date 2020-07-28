@@ -15,6 +15,7 @@ import {
   StatusBar,
   SafeAreaView,
   VirtualizedList,
+  RefreshControl,
   FlatList,
   Button,
 } from 'react-native';
@@ -32,7 +33,11 @@ import Header from '../../components/layout/Header';
 import { ScrollView } from 'react-native-gesture-handler';
 
 
-
+const wait = (timeout) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
 function HomeScreen (props) {
 
   const [mainCategories, setMainCategories] = useState([]);
@@ -40,6 +45,14 @@ function HomeScreen (props) {
   const [isLoading, setIsLoading] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const [showCategoriesText, setShowCategoriesText] = useState("See All");
+  const [refreshing, setRefreshing] = useState(false);
+
+
+const onRefresh = React.useCallback(() => {
+  setRefreshing(true);
+
+  wait(2000).then(() => setRefreshing(false));
+}, []);
 
  
 useEffect(() => {
@@ -47,11 +60,9 @@ useEffect(() => {
   fetch(`http://${Constants.host}:3000/shoppay/get_mainCategory`)
     .then(response => response.json())
     .then((data) => {
-      console.log(data);
+      // console.log(data);
       AsyncStorage.setItem('productmaincategories', JSON.stringify(data));
-      AsyncStorage.getItem('productmaincategories')
-        .then((value) => setMainCategories(JSON.parse(value)))
-
+     
     })
     .catch(err => {
       console.log('Error', err);
@@ -60,21 +71,23 @@ useEffect(() => {
   fetch(`http://${Constants.host}:3000/shoppay/latest_product`)
     .then(response => response.json())
     .then((data) => {
-      console.log(data);
       AsyncStorage.setItem('trendingProducts', JSON.stringify(data));
-      // setMainCategories(productMainCategories)
+      
     })
     .catch(err => {
       console.log('Error', err);
-      // AsyncStorage.setItem('trendingProducts', JSON.stringify(products));
-      // setMainCategories(productMainCategories)
+     
     });
 
-  
+  AsyncStorage.getItem('productmaincategories')
+    .then((value) => setMainCategories(JSON.parse(value)))
+
   AsyncStorage.getItem('trendingProducts')
     .then((value) => setTrendingProducts(JSON.parse(value)))
 
 }, []);
+
+
 
 let categoriesList = null;
 
@@ -102,7 +115,7 @@ if (showCategories) {
   
 }
   
-
+  const DATA = [];
   
 
   return (
@@ -171,6 +184,7 @@ if (showCategories) {
             </View>
             <View>
               <Text style={styles.headerPrimary}>Trending</Text>
+              
             </View>
           </>
         }
@@ -189,7 +203,12 @@ if (showCategories) {
             productPictures={itemData.item.picture}
             navigation={props.navigation}
           />
+        
         }
+         refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        
       />
 
         

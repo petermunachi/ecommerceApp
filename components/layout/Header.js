@@ -56,7 +56,7 @@ function Header(props) {
       style={{
         // flex: 1,
         // justifyContent: 'center',
-        height: "15%"
+        height: 90
       }}
     >
   
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: 'center',
+
   },
 
   logoContainer: {

@@ -87,7 +87,7 @@ function SubCategoryScreen(props) {
                 key={data._id}
                 onPress={() => {
                   props.navigation.navigate('ProductsListScreen', {
-                    subCategoryId: data.id,
+                    subCategoryId: data._id,
                     subCategoryName: data.name,
                   });
                 }}

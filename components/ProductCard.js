@@ -10,6 +10,8 @@ import ImageDisplay from "../components/ImageDisplay";
 import CustomConstants from "../Constants/constants";
 
 const ProductCard = (props) => {
+  const [showDefaultImage, setShowDefaultImage] = useState([]);
+
     let descProps = props.productDescription;
     const desc = (descProps.length > 50) ? descProps.substr(0, 50) + '...' : descProps;
 
@@ -19,6 +21,8 @@ const ProductCard = (props) => {
           productName: props.productTitle
         });
     }
+
+    var image = props.productPictures.length == 0 ? require('../assets/camera-loader.jpg') : { uri: props.productPictures[0] }
     
 
     return(
@@ -37,16 +41,18 @@ const ProductCard = (props) => {
                 
                   <ImageDisplay
                     style={styles.tinyLogo}
-                    source = {{uri: `http://192.168.43.12:3000/${props.productPictures[0]}`}}
+                    source = { image}
+                    loadingIndicatorSource={require('../assets/camera-loader.jpg')}
                   />
                 </View>
                 <View style={styles.descriptionContainer}>
                     <View>
                         <Text style={styles.headerPrimary}>{props.productTitle}</Text>
                     </View>
-                    <View style={styles.marginVertical}>
+                    <View style={styles.description}>
                         <Text style={styles.headerSecondary}>
-                            <Text style={styles.headerTertiary}>Desc: </Text> {desc} 
+                        <Text style={styles.headerTertiary}>Desc: </Text> 
+                            {desc} 
                         </Text>
                     </View>
                     <View style={styles.priceContainer}>
@@ -71,24 +77,25 @@ const styles = StyleSheet.create({
     elevation: 8,
     backgroundColor: 'white',
     borderRadius: 8,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    height: 190,
-    overflow: "hidden",
+    // height: 170,
+    // overflow: "hidden",
     marginTop: 12,
   },
 
   logoContainer: {
-    width: "40%",
+    width: 130,
     // height: "100%",
   },
 
   descriptionContainer: {
-    width: "60%",
-    paddingVertical: "15%",
+    paddingVertical: 10,
     paddingLeft: 8,
-    paddingRight: 0,
-    // height: "100%",
+    paddingRight: 5,
+    flex: 1,
+    
   },
   headerPrimary: {
     color: "rgb(0, 0, 0)",
@@ -100,8 +107,11 @@ const styles = StyleSheet.create({
   headerSecondary:{
     color: CustomConstants.darkGray,
     fontSize: 14,
-    textAlign: "left",
+    textAlign: "left",  
 
+  },
+  description: {
+    marginVertical: 8,
   },
   headerTertiary:{
     color: CustomConstants.darkGray,
@@ -124,14 +134,14 @@ const styles = StyleSheet.create({
       marginVertical: 8,
   },
   priceContainer:{
-    backgroundColor: CustomConstants.lightGreen,
-    borderRadius: 8,
-    width: 80,
-    padding: 3,
+    flexDirection: "row",
   },
   price: {
-      textAlign: "center",
-      fontWeight: "bold",
+    textAlign: "left",
+    fontWeight: "bold",
+    backgroundColor: CustomConstants.lightGreen,
+    borderRadius: 8,
+    padding: 5,
   }
 
 });

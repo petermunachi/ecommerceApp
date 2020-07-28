@@ -107,10 +107,10 @@ function SellScreen (props) {
 
 
    const fetchSubCategories = (itemValue) => {
-      
       fetch(`http://${CustomConstants.host}:3000/shoppay/get_subcategory/${itemValue}`)
          .then(response => response.json())
-         .then(function (data) {            
+         .then(function (data) {    
+            console.log(data);        
             setSubCategories(data)
 
 
@@ -202,6 +202,11 @@ function SellScreen (props) {
 
    }
 
+   function capitalizeFirstLetter(string) {
+      return string[0].toUpperCase() + string.slice(1);
+   }
+
+
    const addProductHandler = () => {
       
       setIsLoading(true);
@@ -215,9 +220,10 @@ function SellScreen (props) {
       const data = {
          sellerId: userDetails._id, title: title, location: city,
          description: description, condition: condition,
-         categories: mainCategoryValue, pcategories: subCategoryValue,
+         categories: subCategoryValue, pcategories: mainCategoryValue,
          price: price, picture: pictures, negotiation: negotiation
       };
+      // console.log(data);
 
       fetch(`http://${CustomConstants.host}:3000/shoppay/add_product`, {
          method: 'POST', 
@@ -302,26 +308,35 @@ function SellScreen (props) {
             <View style={styles.holder}>
                <Text style={styles.headerSecondary}>Choose a category </Text>
                <View style={styles.selectBoxContainer}>
-                  <SelectBox 
-                     status={true}
-                     selectedValue={mainCategoryValue} 
-                     valueChange={onChangeHandler}
-                  >
-                     {mainCategories}
-                  </SelectBox>
+                  <Picker
+                     selectedValue={mainCategoryValue}
+                     style={styles.pickerHeader}
+                     onValueChange={onChangeHandler }
+                     >
+                     {
+                        mainCategories.map((data) => (
+                           <Picker.Item key={data._id} label={capitalizeFirstLetter(data.name)} value={data._id} />
+                        ))
+                     }
+                  </Picker>
                </View>
             </View>
             
             <View style={styles.holder}>
                <Text style={styles.headerSecondary}>Sub-categories </Text>
                <View style={styles.selectBoxContainer}>
-                  <SelectBox 
-                     status={true}
-                     selectedValue={subCategoryValue} 
-                     valueChange={subChangeHandler}
-                  >
-                     {subCategories}
-                  </SelectBox>
+                  <Picker
+                     selectedValue={subCategoryValue}
+                     style={styles.pickerHeader}
+                     onValueChange = {subChangeHandler }
+                     >
+                     {
+                        subCategories.map((data) => (
+                           <Picker.Item key={data._id} label={capitalizeFirstLetter(data.name)} value={data._id} />
+                        ))
+                     }
+                  </Picker>
+                 
                </View>
             </View>
 
@@ -482,6 +497,12 @@ const styles = StyleSheet.create({
       marginVertical: 10,
       
    },
+    pickerHeader: {
+       height: 70,
+       width: '100%',
+       borderColor: 'black',
+       borderWidth: 5,
+    },
    photoContainer: {
       marginRight: 10,
    },

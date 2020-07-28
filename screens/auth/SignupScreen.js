@@ -24,7 +24,6 @@ import SelectBox from '../../components/SelectBox';
 import { userDetail } from '../../testData';
 import ImageDisplay from '../../components/ImageDisplay';
 import Constants from '../../Constants/constants';
-import Wrapper from '../../HOC/Wrapper';
 
 
 
