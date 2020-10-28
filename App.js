@@ -1,5 +1,7 @@
+
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
+
 // In App.js in a new project
 import React, {useState, useEffect} from 'react';
 import {
